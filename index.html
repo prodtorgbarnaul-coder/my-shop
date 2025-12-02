@@ -2367,7 +2367,25 @@ ${order.items.map(item => `• ${item.name} x${item.quantity} - ${item.price * i
                 </div>
             `;
         }
-
+        <!-- После этого блока: -->
+        <div class="form-group">
+            <label>URL изображения:</label>
+            <input type="text" class="form-control" id="newProductImage" 
+                   placeholder="https://example.com/image.jpg" 
+                   value="https://via.placeholder.com/300x200/ecf0f1/7f8c8d?text=Товар">
+        </div>
+        
+        <!-- ДОБАВЬТЕ ЭТОТ БЛОК СРАЗУ ПОСЛЕ: -->
+        <div class="form-group">
+            <label>Или загрузите изображение:</label>
+            <div class="file-upload" onclick="document.getElementById('productImageUpload').click()">
+                <i class="fas fa-image"></i>
+                <p>Нажмите для загрузки изображения</p>
+                <input type="file" id="productImageUpload" accept="image/*" style="display: none;" 
+                       onchange="handleProductImageUpload(event)">
+            </div>
+            <div id="productImagePreview" style="margin-top: 10px;"></div>
+        </div>
         function applyHeaderChanges() {
             const logoText = document.getElementById('logoText').value;
             const headerColor = document.getElementById('headerColor').value;
@@ -3277,3 +3295,4 @@ ${order.items.map(item => `• ${item.name} x${item.quantity} - ${item.price * i
     </script>
 </body>
 </html>
+
