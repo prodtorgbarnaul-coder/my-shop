@@ -2367,6 +2367,86 @@ ${order.items.map(item => `• ${item.name} x${item.quantity} - ${item.price * i
                 </div>
             `;
         }
+        
+        function showAddProductForm() {
+    document.getElementById('editPanelContent').innerHTML = `
+        <h3 style="margin-bottom: 20px;">➕ Добавить новый товар</h3>
+        <div class="form-group">
+            <label>Название товара:</label>
+            <input type="text" class="form-control" id="newProductName" placeholder="Введите название">
+        </div>
+        <div class="form-group">
+            <label>Категория:</label>
+            <input type="text" class="form-control" id="newProductCategory" placeholder="Введите категорию" list="categoryList">
+            <datalist id="categoryList">
+                ${categoriesData.map(cat => `<option value="${cat.name}">`).join('')}
+            </datalist>
+        </div>
+        <div class="form-group">
+            <label>Цена:</label>
+            <input type="number" class="form-control" id="newProductPrice" placeholder="Введите цену" min="0">
+        </div>
+        <div class="form-group">
+            <label>Старая цена (для скидки):</label>
+            <input type="number" class="form-control" id="newProductOldPrice" placeholder="Оставьте пустым, если нет скидки" min="0">
+        </div>
+        <div class="form-group">
+            <label>Количество:</label>
+            <input type="number" class="form-control" id="newProductQuantity" placeholder="Введите количество" min="0" value="0">
+        </div>
+        <div class="form-group">
+            <label>Описание:</label>
+            <textarea class="form-control" id="newProductDescription" placeholder="Введите описание" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+            <label>URL изображения:</label>
+            <input type="text" class="form-control" id="newProductImage" 
+                   placeholder="https://example.com/image.jpg" 
+                   value="https://via.placeholder.com/300x200/ecf0f1/7f8c8d?text=Товар">
+        </div>
+        <div class="form-group">
+            <label>Или загрузите изображение:</label>
+            <div class="file-upload" onclick="document.getElementById('productImageUpload').click()">
+                <i class="fas fa-image"></i>
+                <p>Нажмите для загрузки изображения</p>
+                <input type="file" id="productImageUpload" accept="image/*" style="display: none;" 
+                       onchange="handleProductImageUpload(event)">
+            </div>
+            <div id="productImagePreview" style="margin-top: 10px;"></div>
+        </div>
+        <div style="margin-top: 30px; display: flex; gap: 10px;">
+            <button class="btn btn-success" onclick="saveNewProduct()">Сохранить товар</button>
+            <button class="btn btn-danger" onclick="editProducts()">Отмена</button>
+        </div>
+    `;
+}
+        // Функция обработки загрузки изображения
+function handleProductImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const preview = document.getElementById('productImagePreview');
+        preview.innerHTML = `
+            <img src="${e.target.result}" 
+                 style="max-width: 200px; max-height: 150px; border-radius: 8px; margin-top: 10px;">
+            <div style="margin-top: 10px;">
+                <button type="button" class="btn btn-sm btn-outline" 
+                        onclick="useUploadedImage('${e.target.result}')">
+                    Использовать это изображение
+                </button>
+            </div>
+        `;
+    };
+    reader.readAsDataURL(file);
+}
+
+// Функция для использования загруженного изображения
+function useUploadedImage(imageUrl) {
+    document.getElementById('newProductImage').value = imageUrl;
+    showNotification('✅ Изображение выбрано!');
+}
         <!-- После этого блока: -->
         <div class="form-group">
             <label>URL изображения:</label>
@@ -3295,4 +3375,5 @@ ${order.items.map(item => `• ${item.name} x${item.quantity} - ${item.price * i
     </script>
 </body>
 </html>
+
 
