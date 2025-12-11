@@ -1087,4 +1087,1340 @@
         <section id="aboutPage" style="display: none;" class="section">
             <h2 class="section-title">О нашей компании</h2>
             <div class="products-section">
-               
+                <div class="container">
+                    <div class="about-content">
+                        <p id="aboutText">
+                            Мастер Дома - это профессиональный сервис по ремонту техники и магазин товаров для дома. 
+                            Мы работаем на рынке более 5 лет и заслужили доверие тысяч клиентов.
+                        </p>
+                        <p>
+                            Наша специализация - ремонт электроинструмента, замена аккумуляторов для электротранспорта, 
+                            а также продажа качественных хозяйственных товаров.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Page -->
+        <section id="dashboardPage" style="display: none;" class="section">
+            <h2 class="section-title">Личный кабинет</h2>
+            <div class="dashboard">
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>Личная информация</h3>
+                        <div id="userInfo">
+                            <!-- User info will be loaded here -->
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <h3>История заказов</h3>
+                        <div id="ordersHistory">
+                            <p style="text-align: center; color: var(--gray);">У вас пока нет заказов</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>О магазине</h3>
+                    <p style="color: #bdc3c7; line-height: 1.6;">
+                        Мастер Дома - закрытый магазин для друзей и близких. 
+                        Специальные цены, эксклюзивные товары и профессиональные услуги.
+                    </p>
+                </div>
+                <div class="footer-column">
+                    <h3>Контакты</h3>
+                    <ul>
+                        <li><i class="fas fa-phone"></i> +7 (923) 753-36-06</li>
+                        <li><i class="fas fa-envelope"></i> prodtorg.barnaul@gmail.com</li>
+                        <li><i class="fas fa-clock"></i> Пн-Вс: 9:00-21:00</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Мастер Дома. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ==================== ОСНОВНЫЕ ДАННЫЕ ====================
+        let products = JSON.parse(localStorage.getItem('products')) || [];
+        let services = JSON.parse(localStorage.getItem('services')) || [];
+        let categories = JSON.parse(localStorage.getItem('categories')) || [];
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+        let orders = JSON.parse(localStorage.getItem('orders')) || [];
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        let siteSettings = JSON.parse(localStorage.getItem('siteSettings')) || {
+            backgroundType: 'gradient',
+            backgroundImage: '',
+            headerColor: '#2c5aa0',
+            logoText: 'МАСТЕР ДОМА',
+            heroTitle: 'Мастер Дома - Всё для дома и ремонта',
+            heroText: 'Товары для дома, хозтовары и профессиональный ремонт техники',
+            aboutText: 'Мастер Дома - это профессиональный сервис по ремонту техники и магазин товаров для дома.'
+        };
+        let adminEmail = localStorage.getItem('adminEmail') || '';
+
+        let filteredProducts = [];
+        let editMode = false;
+
+        // ==================== ИНИЦИАЛИЗАЦИЯ ДАННЫХ ====================
+        function initData() {
+            // Создаем администратора по умолчанию
+            if (users.length === 0) {
+                users.push({
+                    id: 1,
+                    name: 'Администратор',
+                    email: 'admin@masterdoma.ru',
+                    phone: '+7 (923) 753-36-06',
+                    password: 'admin123',
+                    role: 'admin',
+                    registrationDate: new Date().toISOString()
+                });
+                saveData('users', users);
+            }
+
+            // Создаем категории по умолчанию
+            if (categories.length === 0) {
+                categories = [
+                    {
+                        id: 1,
+                        name: 'Аккумуляторы',
+                        icon: '🔋',
+                        description: 'Аккумуляторы для электроинструмента и транспорта',
+                        color1: '#667eea',
+                        color2: '#764ba2',
+                        backgroundType: 'gradient'
+                    },
+                    {
+                        id: 2,
+                        name: 'Инструменты',
+                        icon: '🛠️',
+                        description: 'Профессиональные и бытовые инструменты',
+                        color1: '#f093fb',
+                        color2: '#f5576c',
+                        backgroundType: 'gradient'
+                    },
+                    {
+                        id: 3,
+                        name: 'Бытовая химия',
+                        icon: '🧴',
+                        description: 'Средства для уборки и чистки',
+                        color1: '#4facfe',
+                        color2: '#00f2fe',
+                        backgroundType: 'gradient'
+                    }
+                ];
+                saveData('categories', categories);
+            }
+
+            // Создаем услуги по умолчанию
+            if (services.length === 0) {
+                services = [
+                    {
+                        id: 1,
+                        name: 'Ремонт электроинструмента',
+                        icon: '🔧',
+                        description: 'Профессиональный ремонт дрелей, шуруповертов, перфораторов'
+                    },
+                    {
+                        id: 2,
+                        name: 'Замена аккумуляторов',
+                        icon: '🔋',
+                        description: 'Ремонт АКБ для самокатов, электровелосипедов, инструмента'
+                    }
+                ];
+                saveData('services', services);
+            }
+
+            // Загружаем настройки сайта
+            loadSiteSettings();
+            updateUI();
+            loadHomePage();
+            updateCartCount();
+            updateCategoryFilter();
+        }
+
+        function saveData(key, data) {
+            localStorage.setItem(key, JSON.stringify(data));
+        }
+
+        // ==================== УПРАВЛЕНИЕ САЙТОМ ====================
+        function loadSiteSettings() {
+            // Применяем сохраненные настройки
+            if (siteSettings.backgroundType === 'gradient') {
+                document.body.style.background = `linear-gradient(135deg, ${siteSettings.color1 || '#667eea'}, ${siteSettings.color2 || '#764ba2'})`;
+            } else if (siteSettings.backgroundType === 'solid') {
+                document.body.style.background = siteSettings.solidColor || '#667eea';
+            } else if (siteSettings.backgroundType === 'image' && siteSettings.backgroundImage) {
+                document.body.style.background = `url('${siteSettings.backgroundImage}') center/cover fixed`;
+            }
+
+            // Обновляем контент
+            document.getElementById('heroTitle').textContent = siteSettings.heroTitle;
+            document.getElementById('heroText').textContent = siteSettings.heroText;
+            document.getElementById('aboutText').textContent = siteSettings.aboutText;
+            document.querySelector('.logo').innerHTML = `${siteSettings.logoText}<span>.</span>`;
+        }
+
+        // ==================== КОНСТРУКТОР ====================
+        function toggleConstructor() {
+            const toolbar = document.querySelector('.constructor-toolbar');
+            const editButtons = document.getElementById('editButtons');
+            
+            if (toolbar.classList.contains('expanded')) {
+                toolbar.classList.remove('expanded');
+                editButtons.style.display = 'none';
+            } else {
+                toolbar.classList.add('expanded');
+                editButtons.style.display = 'flex';
+            }
+        }
+
+        function editBackground() {
+            document.getElementById('editOverlay').style.display = 'block';
+            document.getElementById('editPanel').style.display = 'block';
+            document.getElementById('editPanelContent').innerHTML = `
+                <h3>🎨 Редактирование фона сайта</h3>
+                <div class="form-group">
+                    <label>Тип фона:</label>
+                    <select class="form-control" id="bgType" onchange="toggleBackgroundOptions()">
+                        <option value="gradient" ${siteSettings.backgroundType === 'gradient' ? 'selected' : ''}>Градиент</option>
+                        <option value="solid" ${siteSettings.backgroundType === 'solid' ? 'selected' : ''}>Сплошной цвет</option>
+                        <option value="image" ${siteSettings.backgroundType === 'image' ? 'selected' : ''}>Изображение</option>
+                    </select>
+                </div>
+                
+                <div id="gradientOptions" style="${siteSettings.backgroundType !== 'gradient' ? 'display: none;' : ''}">
+                    <div class="form-group">
+                        <label>Цвет 1:</label>
+                        <input type="color" class="color-picker" id="bgColor1" value="${siteSettings.color1 || '#667eea'}">
+                    </div>
+                    <div class="form-group">
+                        <label>Цвет 2:</label>
+                        <input type="color" class="color-picker" id="bgColor2" value="${siteSettings.color2 || '#764ba2'}">
+                    </div>
+                </div>
+                
+                <div id="solidOptions" style="${siteSettings.backgroundType !== 'solid' ? 'display: none;' : ''}">
+                    <div class="form-group">
+                        <label>Цвет фона:</label>
+                        <input type="color" class="color-picker" id="solidColor" value="${siteSettings.solidColor || '#667eea'}">
+                    </div>
+                </div>
+                
+                <div id="imageOptions" style="${siteSettings.backgroundType !== 'image' ? 'display: none;' : ''}">
+                    <div class="form-group">
+                        <label>URL изображения:</label>
+                        <input type="text" class="form-control" id="bgImageUrl" placeholder="Введите URL изображения" value="${siteSettings.backgroundImage || ''}">
+                    </div>
+                </div>
+                
+                <div class="panel-actions">
+                    <button class="btn btn-success" onclick="applyBackground()">Применить</button>
+                    <button class="btn btn-danger" onclick="closeEditPanel()">Отмена</button>
+                </div>
+            `;
+        }
+
+        function toggleBackgroundOptions() {
+            const bgType = document.getElementById('bgType').value;
+            document.getElementById('gradientOptions').style.display = bgType === 'gradient' ? 'block' : 'none';
+            document.getElementById('solidOptions').style.display = bgType === 'solid' ? 'block' : 'none';
+            document.getElementById('imageOptions').style.display = bgType === 'image' ? 'block' : 'none';
+        }
+
+        function applyBackground() {
+            const bgType = document.getElementById('bgType').value;
+            siteSettings.backgroundType = bgType;
+            
+            if (bgType === 'gradient') {
+                const color1 = document.getElementById('bgColor1').value;
+                const color2 = document.getElementById('bgColor2').value;
+                document.body.style.background = `linear-gradient(135deg, ${color1}, ${color2})`;
+                siteSettings.color1 = color1;
+                siteSettings.color2 = color2;
+            } else if (bgType === 'solid') {
+                const color = document.getElementById('solidColor').value;
+                document.body.style.background = color;
+                siteSettings.solidColor = color;
+            } else if (bgType === 'image') {
+                const imageUrl = document.getElementById('bgImageUrl').value;
+                if (imageUrl) {
+                    document.body.style.background = `url('${imageUrl}') center/cover fixed`;
+                    siteSettings.backgroundImage = imageUrl;
+                }
+            }
+            
+            saveData('siteSettings', siteSettings);
+            showNotification('✅ Фон обновлен!', 'success');
+            closeEditPanel();
+        }
+
+        function editHeader() {
+            document.getElementById('editOverlay').style.display = 'block';
+            document.getElementById('editPanel').style.display = 'block';
+            document.getElementById('editPanelContent').innerHTML = `
+                <h3>📝 Редактирование шапки</h3>
+                <div class="form-group">
+                    <label>Текст логотипа:</label>
+                    <input type="text" class="form-control" id="logoText" value="${siteSettings.logoText}">
+                </div>
+                <div class="form-group">
+                    <label>Цвет шапки:</label>
+                    <input type="color" class="color-picker" id="headerColor" value="${siteSettings.headerColor || '#2c5aa0'}">
+                </div>
+                <div class="panel-actions">
+                    <button class="btn btn-success" onclick="applyHeaderChanges()">Применить</button>
+                    <button class="btn btn-danger" onclick="closeEditPanel()">Отмена</button>
+                </div>
+            `;
+        }
+
+        function applyHeaderChanges() {
+            const logoText = document.getElementById('logoText').value;
+            const headerColor = document.getElementById('headerColor').value;
+            
+            // Обновляем логотип
+            document.querySelector('.logo').innerHTML = `${logoText}<span>.</span>`;
+            
+            // Обновляем цвет шапки
+            document.querySelector('.header-top').style.background = `linear-gradient(135deg, ${headerColor}, #1a3a6b)`;
+            
+            siteSettings.logoText = logoText;
+            siteSettings.headerColor = headerColor;
+            saveData('siteSettings', siteSettings);
+            
+            showNotification('✅ Шапка обновлена!', 'success');
+            closeEditPanel();
+        }
+
+        // ==================== АУТЕНТИФИКАЦИЯ ====================
+        function showAuthModal() {
+            const modal = document.getElementById('authModal');
+            const title = document.getElementById('authModalTitle');
+            const content = document.getElementById('authContent');
+            
+            title.textContent = currentUser ? 'Личный кабинет' : 'Вход в систему';
+            
+            if (currentUser) {
+                content.innerHTML = `
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <div class="user-avatar" style="width: 80px; height: 80px; font-size: 2rem; margin: 0 auto 15px; background: linear-gradient(135deg, var(--primary), #1a3a6b);">
+                            ${currentUser.name.charAt(0).toUpperCase()}
+                        </div>
+                        <h3>${currentUser.name}</h3>
+                        <p style="color: var(--gray);">${currentUser.role === 'admin' ? 'Администратор' : 'Клиент'}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Телефон:</label>
+                        <input type="tel" class="form-control" value="${currentUser.phone}" readonly>
+                    </div>
+                    ${currentUser.email ? `
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <input type="email" class="form-control" value="${currentUser.email}" readonly>
+                        </div>
+                    ` : ''}
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-danger" onclick="logout()" style="width: 100%;">Выйти</button>
+                    </div>
+                `;
+            } else {
+                content.innerHTML = `
+                    <div class="form-group">
+                        <label>Имя:</label>
+                        <input type="text" class="form-control" id="authName" placeholder="Введите ваше имя">
+                    </div>
+                    <div class="form-group">
+                        <label>Телефон:</label>
+                        <input type="tel" class="form-control" id="authPhone" placeholder="+7 (999) 999-99-99">
+                    </div>
+                    <div class="form-group" id="passwordField" style="display: none;">
+                        <label>Пароль (только для администратора):</label>
+                        <input type="password" class="form-control" id="authPassword" placeholder="Введите пароль">
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-primary" onclick="loginUser()" style="width: 100%;">Войти</button>
+                    </div>
+                    <div style="margin-top: 10px; text-align: center;">
+                        <small style="color: var(--gray);">Для администратора используйте телефон: +7 (923) 753-36-06 и пароль</small>
+                    </div>
+                `;
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').style.display = 'none';
+        }
+
+        function loginUser() {
+            const name = document.getElementById('authName').value;
+            const phone = document.getElementById('authPhone').value;
+            const password = document.getElementById('authPassword') ? document.getElementById('authPassword').value : '';
+            
+            if (!name || !phone) {
+                showNotification('Введите имя и телефон', 'error');
+                return;
+            }
+            
+            // Проверяем, есть ли пользователь
+            let user = users.find(u => u.phone === phone);
+            
+            if (!user) {
+                // Создаем нового пользователя
+                user = {
+                    id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
+                    name: name,
+                    phone: phone,
+                    role: 'user',
+                    registrationDate: new Date().toISOString()
+                };
+                users.push(user);
+                saveData('users', users);
+            }
+            
+            // Проверка администратора
+            if (phone === '+7 (923) 753-36-06' && password === 'admin123') {
+                user.role = 'admin';
+            }
+            
+            currentUser = user;
+            saveData('currentUser', user);
+            
+            updateUI();
+            closeAuthModal();
+            showNotification(`Добро пожаловать, ${name}!`, 'success');
+            
+            if (user.role === 'admin') {
+                showNotification('Режим администратора активирован', 'info');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            updateUI();
+            closeAuthModal();
+            showHome();
+            showNotification('Вы вышли из системы', 'info');
+        }
+
+        // ==================== ТОВАРЫ И КАТЕГОРИИ ====================
+        function loadHomePage() {
+            const dynamicSections = document.getElementById('dynamicSections');
+            
+            let servicesHTML = services.slice(0, 3).map(service => {
+                return `<div class="service-card">
+                    <div class="service-icon">${service.icon}</div>
+                    <h3 class="service-name">${service.name}</h3>
+                    <p class="service-description">${service.description}</p>
+                    <button class="btn" style="margin-top: 1rem;" onclick="showServiceRequestModal(${service.id})">Заказать услугу</button>
+                </div>`;
+            }).join('');
+
+            let productsHTML = products.slice(0, 4).map(product => {
+                const category = categories.find(c => c.id === product.category);
+                return `<div class="product-card">
+                    <img src="${product.image || 'https://via.placeholder.com/300x200?text=Товар'}" alt="${product.name}" class="product-image" onclick="showProductDetails(${product.id})">
+                    <div class="product-info">
+                        <div class="product-category">${product.category || 'Без категории'}</div>
+                        <h3 class="product-name" onclick="showProductDetails(${product.id})">${product.name}</h3>
+                        <div class="product-price">
+                            <span class="current-price">${product.price.toLocaleString()} ₽</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="add-to-cart" onclick="addToCart(${product.id})">
+                                <i class="fas fa-shopping-cart"></i> В корзину
+                            </button>
+                            <button class="details-btn" onclick="showProductDetails(${product.id})">
+                                <i class="fas fa-info"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+
+            let categoriesHTML = categories.map(category => {
+                const background = category.backgroundType === 'gradient' 
+                    ? `linear-gradient(135deg, ${category.color1}, ${category.color2})`
+                    : category.color1;
+                return `<div class="category-card" style="background: ${background}" onclick="filterByCategory('${category.name}')">
+                    <span class="category-icon">${category.icon}</span>
+                    <h3>${category.name}</h3>
+                </div>`;
+            }).join('');
+
+            dynamicSections.innerHTML = 
+                `<section class="section">
+                    <h2 class="section-title">Наши услуги</h2>
+                    <div class="products-section">
+                        <div class="container">
+                            <div class="services-grid">${servicesHTML}</div>
+                        </div>
+                    </div>
+                </section>
+                <section class="section">
+                    <h2 class="section-title">Популярные товары</h2>
+                    <div class="products-section">
+                        <div class="container">
+                            <div class="products-grid">${productsHTML}</div>
+                            <div style="text-align: center; margin-top: 2rem;">
+                                <button class="btn btn-primary" onclick="showProductsPage()">Смотреть все товары</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="section">
+                    <h2 class="section-title">Категории товаров</h2>
+                    <div class="categories-section">
+                        <div class="container">
+                            <div class="categories-grid">${categoriesHTML}</div>
+                        </div>
+                    </div>
+                </section>`;
+        }
+
+        function loadAllProducts() {
+            const allProductsContainer = document.getElementById('allProducts');
+            
+            if (filteredProducts.length === 0) {
+                filteredProducts = [...products];
+            }
+            
+            let productsHTML = filteredProducts.map(product => {
+                return `<div class="product-card">
+                    <img src="${product.image || 'https://via.placeholder.com/300x200?text=Товар'}" alt="${product.name}" class="product-image" onclick="showProductDetails(${product.id})">
+                    <div class="product-info">
+                        <div class="product-category">${product.category || 'Без категории'}</div>
+                        <h3 class="product-name" onclick="showProductDetails(${product.id})">${product.name}</h3>
+                        <div class="product-description-short">${product.description || ''}</div>
+                        <div class="product-price">
+                            <span class="current-price">${product.price.toLocaleString()} ₽</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="add-to-cart" onclick="addToCart(${product.id})">
+                                <i class="fas fa-shopping-cart"></i> В корзину
+                            </button>
+                            <button class="details-btn" onclick="showProductDetails(${product.id})">
+                                <i class="fas fa-info"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+            
+            allProductsContainer.innerHTML = productsHTML;
+        }
+
+        function updateCategoryFilter() {
+            const categoryFilter = document.getElementById('categoryFilter');
+            const uniqueCategories = [...new Set(products.map(p => p.category))];
+            
+            categoryFilter.innerHTML = '<option value="">Все категории</option>' +
+                uniqueCategories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+        }
+
+        function filterProducts() {
+            const category = document.getElementById('categoryFilter').value;
+            const priceRange = document.getElementById('priceFilter').value;
+            
+            filteredProducts = products.filter(product => {
+                if (category && product.category !== category) return false;
+                if (priceRange) {
+                    const [min, max] = priceRange.split('-').map(Number);
+                    if (product.price < min || product.price > max) return false;
+                }
+                return true;
+            });
+            
+            loadAllProducts();
+        }
+
+        function filterByCategory(category) {
+            document.getElementById('categoryFilter').value = category;
+            filterProducts();
+            showProductsPage();
+        }
+
+        // ==================== ИМПОРТ ТОВАРОВ ====================
+        function importProducts(file) {
+            if (!file) return;
+            
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            
+            if (fileExtension === 'csv') {
+                importCSV(file);
+            } else if (fileExtension === 'xlsx') {
+                importExcel(file);
+            } else {
+                showNotification('Поддерживаются только CSV и XLSX файлы', 'error');
+            }
+        }
+
+        function importCSV(file) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const csvData = e.target.result;
+                    const lines = csvData.split('\n');
+                    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+                    
+                    let importedCount = 0;
+                    let updatedCount = 0;
+                    
+                    for (let i = 1; i < lines.length; i++) {
+                        if (lines[i].trim() === '') continue;
+                        
+                        const values = lines[i].split(',').map(v => v.trim());
+                        if (values.length < headers.length) continue;
+                        
+                        const productData = {};
+                        headers.forEach((header, index) => {
+                            productData[header] = values[index] || '';
+                        });
+                        
+                        // Преобразуем данные в нужный формат
+                        const product = {
+                            id: Date.now() + i,
+                            name: productData['название товара'] || productData['название'] || '',
+                            category: productData['категория'] || '',
+                            brand: productData['бренд'] || '',
+                            description: productData['описание'] || '',
+                            purchasePrice: parseFloat(productData['цена закупки']) || 0,
+                            price: parseFloat(productData['цена продажи']) || parseFloat(productData['цена']) || 0,
+                            quantity: parseInt(productData['в наличии']) || 0,
+                            preOrder: productData['под заказ'] === 'да',
+                            image: productData['фото (url ссылка)'] || productData['фото'] || ''
+                        };
+                        
+                        if (!product.name || !product.category) continue;
+                        
+                        // Проверяем, есть ли уже такой товар
+                        const existingIndex = products.findIndex(p => 
+                            p.name === product.name && p.category === product.category
+                        );
+                        
+                        if (existingIndex !== -1) {
+                            products[existingIndex] = product;
+                            updatedCount++;
+                        } else {
+                            products.push(product);
+                            importedCount++;
+                        }
+                    }
+                    
+                    saveData('products', products);
+                    filteredProducts = [...products];
+                    loadAllProducts();
+                    updateCategoryFilter();
+                    
+                    showNotification(`Импорт завершен! Добавлено: ${importedCount}, Обновлено: ${updatedCount}`, 'success');
+                    
+                } catch (error) {
+                    showNotification('Ошибка при импорте CSV файла', 'error');
+                }
+            };
+            
+            reader.readAsText(file, 'UTF-8');
+        }
+
+        function importExcel(file) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+                    
+                    let importedCount = 0;
+                    let updatedCount = 0;
+                    
+                    jsonData.forEach((row, index) => {
+                        const product = {
+                            id: Date.now() + index,
+                            name: row['Название товара'] || row['название'] || '',
+                            category: row['Категория'] || row['категория'] || '',
+                            brand: row['Бренд'] || row['бренд'] || '',
+                            description: row['Описание'] || row['описание'] || '',
+                            purchasePrice: parseFloat(row['Цена закупки'] || row['цена_закупки']) || 0,
+                            price: parseFloat(row['Цена продажи'] || row['цена_продажи'] || row['Цена'] || row['цена']) || 0,
+                            quantity: parseInt(row['В наличии'] || row['в_наличии']) || 0,
+                            preOrder: (row['Под заказ'] || row['под_заказ']) === 'да',
+                            image: row['Фото (URL ссылка)'] || row['Фото'] || row['фото'] || ''
+                        };
+                        
+                        if (!product.name || !product.category) return;
+                        
+                        const existingIndex = products.findIndex(p => 
+                            p.name === product.name && p.category === product.category
+                        );
+                        
+                        if (existingIndex !== -1) {
+                            products[existingIndex] = product;
+                            updatedCount++;
+                        } else {
+                            products.push(product);
+                            importedCount++;
+                        }
+                    });
+                    
+                    saveData('products', products);
+                    filteredProducts = [...products];
+                    loadAllProducts();
+                    updateCategoryFilter();
+                    
+                    showNotification(`Импорт завершен! Добавлено: ${importedCount}, Обновлено: ${updatedCount}`, 'success');
+                    
+                } catch (error) {
+                    showNotification('Ошибка при импорте Excel файла', 'error');
+                }
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+
+        // ==================== КОРЗИНА ====================
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image,
+                    quantity: 1
+                });
+            }
+            
+            saveData('cart', cart);
+            updateCartCount();
+            showNotification('Товар добавлен в корзину!', 'success');
+        }
+
+        function updateCartCount() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = totalItems;
+        }
+
+        function toggleCartPanel() {
+            const cartPanel = document.getElementById('cartPanel');
+            
+            if (cartPanel.classList.contains('open')) {
+                cartPanel.classList.remove('open');
+            } else {
+                cartPanel.classList.add('open');
+                updateCartPanel();
+            }
+        }
+
+        function updateCartPanel() {
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            const cartActions = document.getElementById('cartActions');
+            const totalAmount = document.getElementById('totalAmount');
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<div class="empty-cart"><p>Ваша корзина пуста</p></div>';
+                cartTotal.style.display = 'none';
+                cartActions.style.display = 'none';
+                return;
+            }
+            
+            let itemsHTML = '';
+            let total = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                itemsHTML += `<div class="cart-item">
+                    <img src="${item.image || 'https://via.placeholder.com/60x60?text=Товар'}" alt="${item.name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; margin-right: 1rem;">
+                    <div style="flex: 1;">
+                        <div style="font-weight: bold; margin-bottom: 5px;">${item.name}</div>
+                        <div>${item.price} ₽ × ${item.quantity} = ${itemTotal} ₽</div>
+                    </div>
+                    <button class="btn btn-sm btn-danger" onclick="removeFromCart(${item.id})">×</button>
+                </div>`;
+            });
+            
+            cartItems.innerHTML = itemsHTML;
+            totalAmount.textContent = total + ' ₽';
+            cartTotal.style.display = 'flex';
+            cartActions.style.display = 'flex';
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            saveData('cart', cart);
+            updateCartCount();
+            updateCartPanel();
+            showNotification('Товар удален из корзины', 'info');
+        }
+
+        function checkout() {
+            if (!currentUser) {
+                showAuthModal();
+                return;
+            }
+            
+            if (cart.length === 0) {
+                showNotification('Корзина пуста', 'error');
+                return;
+            }
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const order = {
+                id: orders.length > 0 ? Math.max(...orders.map(o => o.id)) + 1 : 1,
+                userId: currentUser.id,
+                products: cart.map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    quantity: item.quantity,
+                    price: item.price
+                })),
+                total: total,
+                status: 'new',
+                date: new Date().toISOString(),
+                customerName: currentUser.name,
+                customerPhone: currentUser.phone
+            };
+            
+            orders.push(order);
+            saveData('orders', orders);
+            
+            // Отправляем уведомление администратору
+            sendOrderNotification(order);
+            
+            // Очищаем корзину
+            cart = [];
+            saveData('cart', cart);
+            updateCartCount();
+            updateCartPanel();
+            toggleCartPanel();
+            
+            showNotification('Заказ успешно оформлен! С вами свяжутся для подтверждения.', 'success');
+        }
+
+        function sendOrderNotification(order) {
+            // В реальном приложении здесь был бы запрос к серверу для отправки email
+            // Для демо просто показываем уведомление
+            const adminMessage = `Новый заказ #${order.id} от ${order.customerName} (${order.customerPhone}) на сумму ${order.total} ₽`;
+            
+            if (adminEmail) {
+                console.log('Отправка уведомления на email:', adminEmail);
+                console.log('Сообщение:', adminMessage);
+                showNotification('Уведомление отправлено администратору', 'info');
+            }
+            
+            // Сохраняем уведомление для администратора
+            const notifications = JSON.parse(localStorage.getItem('adminNotifications')) || [];
+            notifications.push({
+                id: notifications.length + 1,
+                type: 'new_order',
+                message: adminMessage,
+                orderId: order.id,
+                date: new Date().toISOString(),
+                read: false
+            });
+            localStorage.setItem('adminNotifications', JSON.stringify(notifications));
+        }
+
+        // ==================== АДМИН ПАНЕЛЬ ====================
+        function toggleAdminPanel() {
+            const adminPanel = document.getElementById('adminPanel');
+            const editModeIndicator = document.getElementById('editModeIndicator');
+            
+            if (adminPanel.classList.contains('open')) {
+                adminPanel.classList.remove('open');
+                editModeIndicator.style.display = 'none';
+                editMode = false;
+            } else {
+                adminPanel.classList.add('open');
+                editModeIndicator.style.display = 'block';
+                editMode = true;
+            }
+        }
+
+        function saveContentChanges() {
+            const heroTitle = document.getElementById('editHeroTitle').value;
+            const heroText = document.getElementById('editHeroText').value;
+            
+            document.getElementById('heroTitle').textContent = heroTitle;
+            document.getElementById('heroText').textContent = heroText;
+            
+            siteSettings.heroTitle = heroTitle;
+            siteSettings.heroText = heroText;
+            saveData('siteSettings', siteSettings);
+            
+            showNotification('Изменения сохранены!', 'success');
+        }
+
+        function saveAdminEmail() {
+            adminEmail = document.getElementById('adminEmail').value;
+            localStorage.setItem('adminEmail', adminEmail);
+            showNotification('Email для уведомлений сохранен!', 'success');
+        }
+
+        // ==================== УПРАВЛЕНИЕ ТОВАРАМИ ====================
+        function showAddProductModal() {
+            const modal = document.getElementById('productManagementModal');
+            const title = document.getElementById('productModalTitle');
+            const content = document.getElementById('productManagementContent');
+            
+            title.textContent = 'Добавить товар';
+            content.innerHTML = `
+                <div class="form-group">
+                    <label>Название товара:</label>
+                    <input type="text" class="form-control" id="newProductName" placeholder="Введите название">
+                </div>
+                <div class="form-group">
+                    <label>Категория:</label>
+                    <input type="text" class="form-control" id="newProductCategory" placeholder="Введите категорию">
+                </div>
+                <div class="form-group">
+                    <label>Цена:</label>
+                    <input type="number" class="form-control" id="newProductPrice" placeholder="Введите цену">
+                </div>
+                <div class="form-group">
+                    <label>Количество:</label>
+                    <input type="number" class="form-control" id="newProductQuantity" placeholder="Введите количество">
+                </div>
+                <div class="form-group">
+                    <label>Описание:</label>
+                    <textarea class="form-control" id="newProductDescription" placeholder="Введите описание" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>URL изображения:</label>
+                    <input type="text" class="form-control" id="newProductImage" placeholder="Введите URL изображения">
+                </div>
+                <div class="panel-actions">
+                    <button class="btn btn-success" onclick="saveNewProduct()">Сохранить товар</button>
+                    <button class="btn btn-danger" onclick="closeModal('productManagementModal')">Отмена</button>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        function saveNewProduct() {
+            const name = document.getElementById('newProductName').value;
+            const category = document.getElementById('newProductCategory').value;
+            const price = parseInt(document.getElementById('newProductPrice').value);
+            const quantity = parseInt(document.getElementById('newProductQuantity').value);
+            const description = document.getElementById('newProductDescription').value;
+            const image = document.getElementById('newProductImage').value;
+
+            if (!name || !category || !price) {
+                showNotification('Заполните обязательные поля', 'error');
+                return;
+            }
+
+            const newProduct = {
+                id: Date.now(),
+                name: name,
+                category: category,
+                price: price,
+                quantity: quantity || 0,
+                description: description || '',
+                image: image || 'https://via.placeholder.com/300x200?text=Товар'
+            };
+
+            products.push(newProduct);
+            saveData('products', products);
+            filteredProducts = [...products];
+            loadAllProducts();
+            updateCategoryFilter();
+            
+            closeModal('productManagementModal');
+            showNotification('Товар добавлен!', 'success');
+        }
+
+        // ==================== УСЛУГИ ====================
+        function showServiceRequestModal(serviceId) {
+            const service = services.find(s => s.id === serviceId);
+            if (!service) return;
+            
+            document.getElementById('serviceRequestModal').style.display = 'block';
+        }
+
+        function submitServiceRequest() {
+            const name = document.getElementById('serviceRequestName').value;
+            const phone = document.getElementById('serviceRequestPhone').value;
+            const message = document.getElementById('serviceRequestMessage').value;
+
+            if (!name || !phone) {
+                showNotification('Заполните обязательные поля', 'error');
+                return;
+            }
+
+            // Сохраняем заявку
+            const serviceRequests = JSON.parse(localStorage.getItem('serviceRequests')) || [];
+            serviceRequests.push({
+                id: serviceRequests.length + 1,
+                name: name,
+                phone: phone,
+                message: message,
+                date: new Date().toISOString(),
+                status: 'new'
+            });
+            localStorage.setItem('serviceRequests', JSON.stringify(serviceRequests));
+
+            // Отправляем уведомление администратору
+            if (adminEmail) {
+                const adminMessage = `Новая заявка на услугу от ${name} (${phone}): ${message}`;
+                console.log('Отправка заявки на email:', adminEmail);
+                console.log('Сообщение:', adminMessage);
+            }
+
+            closeModal('serviceRequestModal');
+            showNotification('Заявка отправлена! Мы свяжемся с вами в ближайшее время.', 'success');
+        }
+
+        // ==================== НАВИГАЦИЯ ====================
+        function showHome() {
+            hideAllPages();
+            document.getElementById('homeSection').style.display = 'block';
+        }
+
+        function showProductsPage() {
+            hideAllPages();
+            document.getElementById('productsPage').style.display = 'block';
+            loadAllProducts();
+        }
+
+        function showServicesPage() {
+            hideAllPages();
+            document.getElementById('servicesPage').style.display = 'block';
+            loadAllServices();
+        }
+
+        function showCartPage() {
+            hideAllPages();
+            document.getElementById('cartPage').style.display = 'block';
+            loadCartPage();
+        }
+
+        function showAboutPage() {
+            hideAllPages();
+            document.getElementById('aboutPage').style.display = 'block';
+        }
+
+        function showDashboard() {
+            if (!currentUser) {
+                showAuthModal();
+                return;
+            }
+            hideAllPages();
+            document.getElementById('dashboardPage').style.display = 'block';
+            loadDashboardData();
+        }
+
+        function hideAllPages() {
+            const pages = ['homeSection', 'productsPage', 'servicesPage', 'cartPage', 'aboutPage', 'dashboardPage'];
+            pages.forEach(page => {
+                document.getElementById(page).style.display = 'none';
+            });
+        }
+
+        // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function closeEditPanel() {
+            document.getElementById('editPanel').style.display = 'none';
+            document.getElementById('editOverlay').style.display = 'none';
+        }
+
+        function updateUI() {
+            const authBtn = document.getElementById('authBtn');
+            const dashboardBtn = document.getElementById('dashboardBtn');
+            const adminBtn = document.getElementById('adminBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const userWelcome = document.getElementById('userWelcome');
+
+            if (currentUser) {
+                authBtn.style.display = 'none';
+                dashboardBtn.style.display = 'inline-block';
+                logoutBtn.style.display = 'inline-block';
+                userWelcome.textContent = `Привет, ${currentUser.name}`;
+                
+                if (currentUser.role === 'admin') {
+                    adminBtn.style.display = 'inline-block';
+                } else {
+                    adminBtn.style.display = 'none';
+                }
+            } else {
+                authBtn.style.display = 'inline-block';
+                dashboardBtn.style.display = 'none';
+                adminBtn.style.display = 'none';
+                logoutBtn.style.display = 'none';
+                userWelcome.textContent = '';
+            }
+        }
+
+        function loadDashboardData() {
+            if (!currentUser) return;
+
+            // Информация о пользователе
+            document.getElementById('userInfo').innerHTML = `
+                <div style="margin-bottom: 10px;">
+                    <strong>Имя:</strong> ${currentUser.name}
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <strong>Телефон:</strong> ${currentUser.phone}
+                </div>
+                ${currentUser.email ? `
+                    <div style="margin-bottom: 10px;">
+                        <strong>Email:</strong> ${currentUser.email}
+                    </div>
+                ` : ''}
+                <div style="margin-bottom: 10px;">
+                    <strong>Роль:</strong> ${currentUser.role === 'admin' ? 'Администратор' : 'Клиент'}
+                </div>
+            `;
+
+            // История заказов пользователя
+            const userOrders = orders.filter(order => order.userId === currentUser.id);
+            const ordersHistory = document.getElementById('ordersHistory');
+            
+            if (userOrders.length > 0) {
+                let ordersHTML = '';
+                userOrders.forEach(order => {
+                    ordersHTML += `
+                        <div style="border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <strong>Заказ #${order.id}</strong>
+                                <span style="background: ${order.status === 'new' ? '#ffc107' : order.status === 'completed' ? '#28a745' : '#6c757d'}; 
+                                      color: white; padding: 5px 10px; border-radius: 15px; font-size: 12px;">
+                                    ${order.status === 'new' ? 'Новый' : order.status === 'completed' ? 'Выполнен' : 'В обработке'}
+                                </span>
+                            </div>
+                            <div style="margin-bottom: 5px;">Дата: ${new Date(order.date).toLocaleDateString('ru-RU')}</div>
+                            <div style="margin-bottom: 5px;">Товары: ${order.products.map(p => `${p.name} (${p.quantity} шт.)`).join(', ')}</div>
+                            <div><strong>Итого: ${order.total} ₽</strong></div>
+                        </div>
+                    `;
+                });
+                ordersHistory.innerHTML = ordersHTML;
+            } else {
+                ordersHistory.innerHTML = '<p style="text-align: center; color: var(--gray);">У вас пока нет заказов</p>';
+            }
+        }
+
+        function showProductDetails(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            const modal = document.getElementById('productModal');
+            const title = document.getElementById('productModalTitle');
+            const content = document.getElementById('productModalContent');
+            
+            title.textContent = product.name;
+            content.innerHTML = `
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <img src="${product.image || 'https://via.placeholder.com/400x300?text=Товар'}" alt="${product.name}" 
+                         style="max-width: 100%; max-height: 300px; border-radius: 10px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <strong>Категория:</strong> ${product.category}
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <strong>Цена:</strong> <span style="font-size: 1.5rem; color: var(--primary); font-weight: bold;">${product.price} ₽</span>
+                </div>
+                ${product.brand ? `
+                    <div style="margin-bottom: 15px;">
+                        <strong>Бренд:</strong> ${product.brand}
+                    </div>
+                ` : ''}
+                <div style="margin-bottom: 15px;">
+                    <strong>Наличие:</strong> ${product.quantity} шт.
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <strong>Описание:</strong>
+                    <p style="margin-top: 10px; line-height: 1.6;">${product.description}</p>
+                </div>
+                <button class="btn btn-primary" onclick="addToCart(${product.id}); closeProductModal();" style="width: 100%;">
+                    <i class="fas fa-shopping-cart"></i> Добавить в корзину
+                </button>
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').style.display = 'none';
+        }
+
+        function loadAllServices() {
+            const allServicesContainer = document.getElementById('allServices');
+            let servicesHTML = services.map(service => {
+                return `<div class="service-card">
+                    <div class="service-icon">${service.icon}</div>
+                    <h3 class="service-name">${service.name}</h3>
+                    <p class="service-description">${service.description}</p>
+                    <button class="btn" style="margin-top: 1rem;" onclick="showServiceRequestModal(${service.id})">Заказать услугу</button>
+                </div>`;
+            }).join('');
+            allServicesContainer.innerHTML = servicesHTML;
+        }
+
+        function loadCartPage() {
+            const cartPageContent = document.getElementById('cartPageContent');
+            
+            if (cart.length === 0) {
+                cartPageContent.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <p style="font-size: 1.2rem; margin-bottom: 20px;">Ваша корзина пуста</p>
+                        <button class="btn btn-primary" onclick="showProductsPage()">Перейти к покупкам</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            let itemsHTML = '';
+            let total = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                itemsHTML += `
+                    <div style="display: flex; align-items: center; padding: 15px; border-bottom: 1px solid var(--border);">
+                        <img src="${item.image || 'https://via.placeholder.com/80x80?text=Товар'}" alt="${item.name}" 
+                             style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; margin-right: 15px;">
+                        <div style="flex: 1;">
+                            <div style="font-weight: bold; margin-bottom: 5px;">${item.name}</div>
+                            <div>${item.price} ₽ × ${item.quantity} = ${itemTotal} ₽</div>
+                        </div>
+                        <button class="btn btn-danger" onclick="removeFromCart(${item.id})">Удалить</button>
+                    </div>
+                `;
+            });
+            
+            cartPageContent.innerHTML = `
+                ${itemsHTML}
+                <div style="margin-top: 20px; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <div style="display: flex; justify-content: space-between; font-size: 1.5rem; font-weight: bold; margin-bottom: 20px;">
+                        <span>Итого:</span>
+                        <span>${total} ₽</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="checkout()" style="width: 100%; padding: 15px; font-size: 1.1rem;">
+                        Оформить заказ
+                    </button>
+                    <button class="btn btn-outline" onclick="showProductsPage()" style="width: 100%; margin-top: 10px; padding: 15px;">
+                        Продолжить покупки
+                    </button>
+                </div>
+            `;
+        }
+
+        // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            initData();
+            
+            // Добавляем тестовые товары если их нет
+            if (products.length === 0) {
+                const testProducts = [
+                    {
+                        id: 1,
+                        name: 'Аккумулятор для шуруповерта 18V',
+                        category: 'Аккумуляторы',
+                        price: 2500,
+                        quantity: 10,
+                        description: 'Литий-ионный аккумулятор для электроинструмента',
+                        image: 'https://via.placeholder.com/300x200?text=Аккумулятор'
+                    },
+                    {
+                        id: 2,
+                        name: 'Набор инструментов 150 предметов',
+                        category: 'Инструменты',
+                        price: 4500,
+                        quantity: 5,
+                        description: 'Профессиональный набор инструментов для дома',
+                        image: 'https://via.placeholder.com/300x200?text=Инструменты'
+                    }
+                ];
+                
+                products = testProducts;
+                saveData('products', products);
+                filteredProducts = [...products];
+                loadAllProducts();
+                updateCategoryFilter();
+            }
+        });
+
+        // Глобальные функции
+        window.toggleConstructor = toggleConstructor;
+        window.editBackground = editBackground;
+        window.toggleBackgroundOptions = toggleBackgroundOptions;
+        window.applyBackground = applyBackground;
+        window.editHeader = editHeader;
+        window.applyHeaderChanges = applyHeaderChanges;
+        window.editCategories = editCategories;
+        window.editProducts = editProducts;
+        window.editServices = editServices;
+        window.editOrders = editOrders;
+        window.closeEditPanel = closeEditPanel;
+        window.showAuthModal = showAuthModal;
+        window.closeAuthModal = closeAuthModal;
+        window.loginUser = loginUser;
+        window.logout = logout;
+        window.showHome = showHome;
+        window.showProductsPage = showProductsPage;
+        window.showServicesPage = showServicesPage;
+        window.showCartPage = showCartPage;
+        window.showAboutPage = showAboutPage;
+        window.showDashboard = showDashboard;
+        window.addToCart = addToCart;
+        window.toggleCartPanel = toggleCartPanel;
+        window.removeFromCart = removeFromCart;
+        window.checkout = checkout;
+        window.toggleAdminPanel = toggleAdminPanel;
+        window.saveContentChanges = saveContentChanges;
+        window.saveAdminEmail = saveAdminEmail;
+        window.showAddProductModal = showAddProductModal;
+        window.saveNewProduct = saveNewProduct;
+        window.filterByCategory = filterByCategory;
+        window.filterProducts = filterProducts;
+        window.showProductDetails = showProductDetails;
+        window.closeProductModal = closeProductModal;
+        window.showServiceRequestModal = showServiceRequestModal;
+        window.submitServiceRequest = submitServiceRequest;
+        window.closeModal = closeModal;
+        window.importProducts = importProducts;
+    </script>
+</body>
+</html>
