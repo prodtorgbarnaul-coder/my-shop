@@ -3,35 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Магазин "Для своих" - Всё для дома и ремонта</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Магазин для своих - Эксклюзивные товары</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* ==================== ОСНОВНЫЕ ПЕРЕМЕННЫЕ ==================== */
         :root {
-            --primary: #2c5aa0;
-            --primary-dark: #1a3a6b;
-            --primary-light: #4a7ac7;
-            --secondary: #e74c3c;
-            --accent: #27ae60;
-            --accent-light: #2ecc71;
-            --light: #f8f9fa;
-            --dark: #2c3e50;
-            --gray: #6c757d;
-            --gray-light: #ecf0f1;
-            --border: #e9ecef;
-            --success: #28a745;
-            --warning: #ffc107;
-            --danger: #dc3545;
-            --info: #17a2b8;
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #3b82f6;
+            --secondary: #7c3aed;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --gray-light: #e2e8f0;
+            --border: #cbd5e1;
             
-            --radius: 10px;
-            --shadow: 0 5px 15px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 30px rgba(0,0,0,0.15);
-            --transition: all 0.3s ease;
-            
-            --bg-gradient: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            --text-gradient: linear-gradient(135deg, var(--primary), var(--primary-light));
+            --radius: 12px;
+            --radius-lg: 20px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
@@ -41,498 +37,512 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
             color: var(--dark);
-            background-color: #f5f7fa;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             min-height: 100vh;
-            padding-top: 80px;
         }
 
-        /* ==================== КОНСТРУКТОР АДМИНИСТРАТОРА ==================== */
-        .constructor-toolbar {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 10000;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 50px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            transition: var(--transition);
-            overflow: hidden;
-        }
-
-        .constructor-toggle {
-            width: 50px;
-            height: 50px;
-            background: var(--bg-gradient);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 1.2rem;
-        }
-
-        .constructor-toggle:hover {
-            transform: scale(1.1);
-            box-shadow: 0 8px 25px rgba(44, 90, 160, 0.4);
-        }
-
-        .constructor-toolbar.expanded {
-            border-radius: 25px;
-            padding: 15px;
-        }
-
-        #editButtons {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .edit-btn {
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid var(--border);
-            color: var(--dark);
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: var(--transition);
-            white-space: nowrap;
-        }
-
-        .edit-btn:hover {
-            background: var(--primary);
-            color: white;
-            transform: translateX(-5px);
-        }
-
-        .edit-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 9998;
-            display: none;
-        }
-
-        .edit-panel {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        /* ===== НОВЫЙ ХЕДЕР ===== */
+        .main-header {
             background: white;
-            padding: 30px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-lg);
-            z-index: 9999;
-            max-width: 800px;
-            width: 90%;
-            max-height: 90vh;
-            overflow: hidden;
-            display: none;
-        }
-
-        .edit-panel-content {
-            max-height: calc(90vh - 120px);
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-
-        .edit-panel-content::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .edit-panel-content::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 3px;
-        }
-
-        .edit-panel-content::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 3px;
-        }
-
-        /* ==================== ХЕДЕР ==================== */
-        header {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: fixed;
-            width: 100%;
+            box-shadow: var(--shadow);
+            position: sticky;
             top: 0;
             z-index: 1000;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
         }
 
         .header-top {
-            background: var(--bg-gradient);
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
             color: white;
             padding: 8px 0;
             font-size: 14px;
         }
 
-        .header-main {
-            padding: 15px 0;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .header-main .container {
+        .header-content {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
+            justify-content: space-between;
+            padding: 20px 0;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px 40px;
         }
 
         .logo {
-            font-size: 28px;
-            font-weight: bold;
-            color: transparent;
-            background: var(--text-gradient);
-            -webkit-background-clip: text;
-            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 12px;
             text-decoration: none;
         }
 
-        .search-bar {
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .search-container {
             flex: 1;
-            min-width: 300px;
             max-width: 500px;
+            margin: 0 30px;
             position: relative;
         }
 
-        .search-bar input {
+        .search-input {
             width: 100%;
-            padding: 12px 50px 12px 20px;
+            padding: 14px 50px 14px 20px;
             border: 2px solid var(--border);
             border-radius: 30px;
-            font-size: 14px;
-            background: white;
+            font-size: 15px;
+            background: var(--light);
             transition: var(--transition);
         }
 
-        .search-bar input:focus {
+        .search-input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            background: white;
         }
 
-        .search-bar button {
+        .search-btn {
             position: absolute;
-            right: 5px;
+            right: 6px;
             top: 50%;
             transform: translateY(-50%);
-            background: var(--bg-gradient);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             border: none;
             color: white;
             width: 40px;
             height: 40px;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .search-btn:hover {
+            transform: translateY(-50%) scale(1.05);
         }
 
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
         }
 
-        .header-action {
+        .action-btn {
+            position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-decoration: none;
-            color: var(--dark);
-            font-size: 12px;
+            color: var(--gray);
             transition: var(--transition);
-            position: relative;
+            padding: 8px;
+            border-radius: var(--radius);
         }
 
-        .header-action:hover {
-            transform: translateY(-2px);
+        .action-btn:hover {
             color: var(--primary);
+            background: var(--light);
         }
 
-        .header-action i {
+        .action-btn i {
             font-size: 20px;
             margin-bottom: 4px;
         }
 
-        .cart-count, .notification-count {
-            background: var(--secondary);
+        .action-btn span {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: var(--danger);
             color: white;
             border-radius: 50%;
             width: 20px;
             height: 20px;
-            font-size: 12px;
+            font-size: 11px;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: absolute;
-            top: -5px;
-            right: -5px;
             font-weight: bold;
         }
 
-        .notification-count {
-            background: var(--accent);
-        }
-
-        .user-info {
+        .user-menu {
             display: flex;
             align-items: center;
-            gap: 10px;
-            color: var(--dark);
-            padding: 8px 15px;
+            gap: 12px;
+            padding: 10px 16px;
             background: var(--light);
-            border-radius: 25px;
-            border: 1px solid var(--border);
-        }
-
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--bg-gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .user-details {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .user-name {
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .user-role {
-            font-size: 10px;
-            color: var(--gray);
-        }
-
-        .logout-btn {
-            background: none;
-            border: none;
-            color: var(--gray);
+            border-radius: 30px;
             cursor: pointer;
-            padding: 5px;
-            border-radius: 50%;
             transition: var(--transition);
         }
 
-        .logout-btn:hover {
-            background: var(--danger);
-            color: white;
+        .user-menu:hover {
+            background: var(--gray-light);
         }
 
-        /* ==================== ГЛАВНАЯ СЕКЦИЯ ==================== */
-        .hero {
-            background: var(--bg-gradient);
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
-            padding: 100px 0;
-            text-align: center;
+            font-weight: 600;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-role {
+            font-size: 11px;
+            color: var(--gray);
+        }
+
+        /* ===== НОВАЯ ГЛАВНАЯ СЕКЦИЯ ===== */
+        .hero-section {
             position: relative;
             overflow: hidden;
+            padding: 100px 0;
+            background: linear-gradient(135deg, 
+                rgba(37, 99, 235, 0.1) 0%,
+                rgba(124, 58, 237, 0.1) 100%);
         }
 
-        .hero::before {
-            content: '';
+        .hero-bg {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" opacity="0.1"><path d="M0 0h1200v600H0z" fill="none"/><path d="M0 300c200-200 400 200 600 0s400-200 600 0v300H0z" fill="white"/></svg>');
-            background-size: cover;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(37, 99, 235, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.1) 0%, transparent 50%);
         }
 
         .hero-content {
             position: relative;
-            z-index: 1;
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
+            padding: 0 40px;
+            text-align: center;
         }
 
-        .hero h1 {
-            font-size: 3.5rem;
+        .hero-title {
+            font-size: 48px;
+            font-weight: 800;
             margin-bottom: 20px;
-            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
         }
 
-        .hero p {
-            font-size: 1.3rem;
-            opacity: 0.9;
-            margin-bottom: 30px;
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
         }
 
-        /* ==================== КАТЕГОРИИ ==================== */
-        .section {
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ===== КАТЕГОРИИ ===== */
+        .categories-section {
             padding: 80px 0;
+            background: white;
         }
 
         .section-title {
             text-align: center;
-            font-size: 2.5rem;
+            font-size: 36px;
+            font-weight: 800;
             margin-bottom: 50px;
             color: var(--dark);
-            position: relative;
-            font-weight: 700;
-        }
-
-        .section-title::after {
-            content: '';
-            display: block;
-            width: 80px;
-            height: 4px;
-            background: var(--bg-gradient);
-            margin: 15px auto;
-            border-radius: 2px;
         }
 
         .categories-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
         }
 
         .category-card {
             background: white;
-            border-radius: var(--radius);
-            padding: 30px 20px;
+            border-radius: var(--radius-lg);
+            padding: 40px 30px;
             text-align: center;
             text-decoration: none;
             color: var(--dark);
             transition: var(--transition);
             border: 1px solid var(--border);
-            box-shadow: var(--shadow);
             position: relative;
             overflow: hidden;
+            box-shadow: var(--shadow);
         }
 
         .category-card:hover {
             transform: translateY(-10px);
-            box-shadow: var(--shadow-lg);
+            box-shadow: var(--shadow-xl);
             border-color: var(--primary-light);
         }
 
-        .category-icon {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            display: block;
-            color: var(--primary);
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
         }
 
-        .category-card h3 {
-            font-size: 1.3rem;
-            font-weight: 600;
+        .category-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .category-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .category-title {
+            font-size: 20px;
+            font-weight: 700;
             margin-bottom: 10px;
         }
 
-        .category-description {
+        .category-desc {
             color: var(--gray);
-            font-size: 0.95rem;
-            line-height: 1.4;
+            font-size: 14px;
+            line-height: 1.5;
         }
 
-        /* ==================== ТОВАРЫ ==================== */
+        /* ===== ПРЕИМУЩЕСТВА ===== */
+        .features-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            color: white;
+            font-size: 30px;
+        }
+
+        .feature-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .feature-desc {
+            color: var(--gray);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* ===== ТОВАРЫ ===== */
+        .products-section {
+            padding: 80px 0;
+            background: white;
+        }
+
         .products-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 40px;
-            flex-wrap: wrap;
-            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto 50px;
+            padding: 0 40px;
         }
 
         .filters {
             display: flex;
             gap: 15px;
             align-items: center;
-            flex-wrap: wrap;
         }
 
         .filter-select {
-            padding: 10px 20px;
+            padding: 12px 24px;
             border: 2px solid var(--border);
-            border-radius: 25px;
+            border-radius: 30px;
             background: white;
             font-size: 14px;
+            font-weight: 500;
+            color: var(--dark);
             cursor: pointer;
             transition: var(--transition);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 50px;
         }
 
         .filter-select:focus {
             outline: none;
             border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
         }
 
         .product-card {
             background: white;
-            border-radius: var(--radius);
+            border-radius: var(--radius-lg);
             overflow: hidden;
             box-shadow: var(--shadow);
             transition: var(--transition);
             position: relative;
-            display: flex;
-            flex-direction: column;
         }
 
         .product-card:hover {
             transform: translateY(-8px);
-            box-shadow: var(--shadow-lg);
+            box-shadow: var(--shadow-xl);
         }
 
-        .product-badge {
+        .product-badges {
             position: absolute;
             top: 15px;
             left: 15px;
-            background: var(--secondary);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
             z-index: 2;
         }
 
-        .product-image-container {
-            position: relative;
-            overflow: hidden;
-            height: 200px;
-            background: var(--gray-light);
+        .product-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-new {
+            background: var(--accent);
+            color: white;
+        }
+
+        .badge-sale {
+            background: var(--danger);
+            color: white;
+        }
+
+        .badge-hit {
+            background: var(--warning);
+            color: white;
         }
 
         .product-image {
             width: 100%;
-            height: 100%;
+            height: 220px;
             object-fit: cover;
-            transition: transform 0.3s ease;
+            transition: transform 0.5s ease;
         }
 
         .product-card:hover .product-image {
@@ -540,34 +550,32 @@
         }
 
         .product-info {
-            padding: 20px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
+            padding: 25px;
         }
 
         .product-category {
-            color: var(--gray);
+            color: var(--primary);
             font-size: 12px;
             text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
             margin-bottom: 8px;
-            font-weight: 600;
+            display: block;
         }
 
-        .product-name {
-            font-size: 1.2rem;
+        .product-title {
+            font-size: 18px;
             font-weight: 700;
             margin-bottom: 10px;
             color: var(--dark);
-            line-height: 1.3;
-            flex-grow: 1;
+            line-height: 1.4;
         }
 
-        .product-description-short {
+        .product-description {
             color: var(--gray);
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-            line-height: 1.4;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 20px;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
@@ -578,67 +586,64 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
         }
 
         .current-price {
-            font-size: 1.5rem;
-            font-weight: bold;
+            font-size: 24px;
+            font-weight: 800;
             color: var(--primary);
         }
 
         .old-price {
-            font-size: 1.1rem;
+            font-size: 18px;
             color: var(--gray);
             text-decoration: line-through;
         }
 
         .discount {
-            background: var(--accent);
+            background: var(--danger);
             color: white;
-            padding: 4px 12px;
+            padding: 4px 10px;
             border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: bold;
+            font-size: 12px;
+            font-weight: 700;
         }
 
-        .product-status {
-            font-size: 0.8rem;
-            padding: 8px 15px;
-            border-radius: 20px;
-            display: inline-block;
-            margin-bottom: 15px;
-            font-weight: 600;
-            align-self: flex-start;
+        .product-stats {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
         }
 
-        .status-in-stock {
-            background: rgba(40, 167, 69, 0.1);
-            color: #155724;
-            border: 1px solid rgba(40, 167, 69, 0.2);
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .status-pre-order {
-            background: rgba(255, 193, 7, 0.1);
-            color: #856404;
-            border: 1px solid rgba(255, 193, 7, 0.2);
+        .stat-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark);
         }
 
-        .status-out-of-stock {
-            background: rgba(220, 53, 69, 0.1);
-            color: #721c24;
-            border: 1px solid rgba(220, 53, 69, 0.2);
+        .stat-label {
+            font-size: 12px;
+            color: var(--gray);
         }
 
         .product-actions {
             display: flex;
             gap: 10px;
-            margin-top: auto;
         }
 
         .btn {
-            padding: 12px 25px;
+            padding: 14px 24px;
             border: none;
             border-radius: var(--radius);
             cursor: pointer;
@@ -648,18 +653,18 @@
             justify-content: center;
             gap: 8px;
             transition: var(--transition);
-            font-size: 0.9rem;
+            font-size: 15px;
         }
 
         .btn-primary {
-            background: var(--bg-gradient);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            border: none;
+            flex: 1;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(44, 90, 160, 0.3);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
         }
 
         .btn-outline {
@@ -673,279 +678,984 @@
             color: white;
         }
 
-        .btn-success {
-            background: var(--accent);
-            color: white;
-            border: none;
+        .btn-icon {
+            width: 46px;
+            height: 46px;
+            padding: 0;
+            border-radius: 50%;
+            background: var(--light);
+            color: var(--dark);
         }
 
-        .btn-danger {
-            background: var(--danger);
+        .btn-icon:hover {
+            background: var(--primary);
             color: white;
-            border: none;
         }
 
-        .btn-sm {
-            padding: 8px 15px;
+        /* ===== АДМИН ПАНЕЛЬ ===== */
+        .admin-panel {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: var(--shadow-xl);
+            z-index: 2000;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+        }
+
+        .admin-panel.open {
+            right: 0;
+        }
+
+        .admin-header {
+            padding: 30px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .admin-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .admin-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .admin-content {
+            padding: 30px;
+        }
+
+        .admin-section {
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 0;
+            text-align: left;
+        }
+
+        .toggle-btn {
+            background: var(--light);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--dark);
+        }
+
+        .toggle-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
             font-size: 14px;
         }
 
-        .add-to-cart {
-            flex: 1;
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 14px;
+            transition: var(--transition);
+            background: white;
         }
 
-        .add-to-cart:disabled {
-            background: var(--gray);
-            cursor: not-allowed;
-            transform: none !important;
-            box-shadow: none !important;
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
-        /* ==================== ФУТЕР ==================== */
-        footer {
+        .color-picker {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: var(--transition);
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        .color-option.active {
+            border-color: var(--primary);
+        }
+
+        .file-upload {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--light);
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .file-upload i {
+            font-size: 48px;
+            color: var(--gray);
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .uploaded-image {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: var(--radius);
+            margin-top: 15px;
+            display: none;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: var(--light);
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            font-size: 12px;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .admin-toggle {
+            position: fixed;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 15px 10px;
+            border-radius: 10px 0 0 10px;
+            cursor: pointer;
+            z-index: 1999;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            font-weight: 600;
+            letter-spacing: 2px;
+            transition: var(--transition);
+        }
+
+        .admin-toggle:hover {
+            padding-right: 20px;
+        }
+
+        /* ===== ФУТЕР ===== */
+        .main-footer {
             background: var(--dark);
             color: white;
-            padding: 60px 0 20px;
-            margin-top: 60px;
+            padding: 80px 0 40px;
+            margin-top: 80px;
         }
 
         .footer-content {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            margin-bottom: 30px;
+            gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
         }
 
         .footer-column h3 {
             color: white;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
+            margin-bottom: 25px;
+            font-size: 18px;
+            font-weight: 700;
         }
 
-        .footer-column ul {
+        .footer-links {
             list-style: none;
         }
 
-        .footer-column ul li {
-            margin-bottom: 10px;
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: var(--transition);
             display: flex;
             align-items: center;
             gap: 10px;
-            color: #bdc3c7;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            transform: translateX(5px);
         }
 
         .footer-bottom {
             text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            color: rgba(255,255,255,0.7);
+            padding-top: 40px;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            font-size: 14px;
         }
 
-        /* ==================== УТИЛИТЫ ==================== */
-        .text-center {
+        /* ===== УВЕДОМЛЕНИЯ ===== */
+        .notification {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-xl);
+            padding: 20px;
+            z-index: 3000;
+            min-width: 300px;
+            transform: translateX(400px);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 4px solid var(--accent);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left-color: var(--accent);
+        }
+
+        .notification.error {
+            border-left-color: var(--danger);
+        }
+
+        .notification.info {
+            border-left-color: var(--primary);
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .notification-title {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .notification-message {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        /* ===== АДАПТИВНОСТЬ ===== */
+        @media (max-width: 1200px) {
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+            
+            .hero-title {
+                font-size: 42px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .header-content {
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+            
+            .search-container {
+                order: 3;
+                max-width: 100%;
+                margin: 0;
+            }
+            
+            .hero-title {
+                font-size: 36px;
+            }
+            
+            .hero-subtitle {
+                font-size: 18px;
+            }
+            
+            .admin-panel {
+                width: 100%;
+                right: -100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 20px;
+            }
+            
+            .hero-section {
+                padding: 60px 0;
+            }
+            
+            .hero-content {
+                padding: 0 20px;
+            }
+            
+            .hero-title {
+                font-size: 32px;
+            }
+            
+            .hero-stats {
+                flex-direction: column;
+                gap: 20px;
+                margin-top: 40px;
+            }
+            
+            .products-header {
+                flex-direction: column;
+                gap: 20px;
+                align-items: stretch;
+            }
+            
+            .filters {
+                flex-wrap: wrap;
+            }
+            
+            .filter-select {
+                flex: 1;
+                min-width: 150px;
+            }
+            
+            .categories-grid,
+            .features-grid,
+            .products-grid {
+                padding: 0 20px;
+            }
+            
+            .footer-content {
+                padding: 0 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-text {
+                display: none;
+            }
+            
+            .hero-title {
+                font-size: 28px;
+            }
+            
+            .section-title {
+                font-size: 28px;
+            }
+            
+            .product-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* ===== ДОПОЛНИТЕЛЬНЫЕ СТИЛИ ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius-lg);
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .empty-state {
             text-align: center;
+            padding: 60px 20px;
+            grid-column: 1 / -1;
         }
 
-        .mt-2 { margin-top: 0.5rem; }
-        .mt-4 { margin-top: 1rem; }
-        .mb-2 { margin-bottom: 0.5rem; }
-        .mb-4 { margin-bottom: 1rem; }
+        .empty-state i {
+            font-size: 64px;
+            color: var(--gray-light);
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .empty-state h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .empty-state p {
+            color: var(--gray);
+            max-width: 400px;
+            margin: 0 auto 30px;
+        }
 
         .loading {
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
+            border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: white;
             animation: spin 1s ease-in-out infinite;
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* ==================== АДАПТИВНОСТЬ ==================== */
-        @media (max-width: 992px) {
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .products-grid {
-                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            to {
+                transform: rotate(360deg);
             }
         }
 
-        @media (max-width: 768px) {
-            body {
-                padding-top: 140px;
-            }
-            
-            .header-main .container {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .search-bar {
-                min-width: 100%;
-                order: 3;
-                margin-top: 15px;
-            }
-            
-            .header-actions {
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-            
-            .hero {
-                padding: 60px 0;
-            }
-            
-            .hero h1 {
-                font-size: 2rem;
-            }
-            
-            .hero p {
-                font-size: 1.1rem;
-            }
-            
-            .section-title {
-                font-size: 2rem;
-            }
-            
-            .products-header {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .filters {
-                justify-content: center;
-            }
-            
-            .products-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .edit-panel {
-                width: 95%;
-                padding: 20px;
-            }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
         }
 
-        @media (max-width: 480px) {
-            .categories-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .filter-select {
-                width: 100%;
-            }
-            
-            .filters {
-                flex-direction: column;
-            }
+        .tab-nav {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            color: var(--gray);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .drag-area {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 20px;
+        }
+
+        .drag-area.drag-over {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .drag-area i {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .import-results {
+            background: var(--light);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .result-added .result-value {
+            color: var(--accent);
+        }
+
+        .result-updated .result-value {
+            color: var(--primary);
+        }
+
+        .result-errors .result-value {
+            color: var(--danger);
+        }
+
+        .result-categories .result-value {
+            color: var(--secondary);
+        }
+
+        .result-label {
+            font-size: 12px;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
     </style>
 </head>
 <body>
-    <!-- Конструктор администратора -->
-    <div class="constructor-toolbar" id="constructorToolbar">
-        <div class="constructor-toggle" onclick="toggleConstructor()">
-            <i class="fas fa-cogs"></i>
+    <!-- Админ панель -->
+    <div class="admin-toggle" onclick="toggleAdminPanel()">
+        <i class="fas fa-cog"></i> АДМИН ПАНЕЛЬ
+    </div>
+
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-header">
+            <div class="admin-title">Панель управления</div>
+            <div class="admin-subtitle">Полный контроль над магазином</div>
         </div>
-        <div id="editButtons" style="display: none;">
-            <button class="edit-btn" onclick="editBackground()"><i class="fas fa-palette"></i> Фон</button>
-            <button class="edit-btn" onclick="editHeader()"><i class="fas fa-header"></i> Шапка</button>
-            <button class="edit-btn" onclick="editCategories()"><i class="fas fa-tags"></i> Категории</button>
-            <button class="edit-btn" onclick="manageProducts()"><i class="fas fa-box"></i> Товары</button>
-            <button class="edit-btn" onclick="showImportPanel()"><i class="fas fa-file-import"></i> Импорт</button>
-            <button class="edit-btn" onclick="manageOrders()"><i class="fas fa-clipboard-list"></i> Заказы</button>
-            <button class="edit-btn" onclick="saveDesign()"><i class="fas fa-save"></i> Сохранить</button>
-            <button class="edit-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Выйти</button>
+        
+        <div class="admin-content">
+            <div class="admin-section">
+                <div class="section-header">
+                    <h3 class="section-title">📊 Статистика</h3>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="value" id="statProducts">0</div>
+                        <div class="label">Товаров</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value" id="statOrders">0</div>
+                        <div class="label">Заказов</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value" id="statRevenue">0</div>
+                        <div class="label">Выручка</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value" id="statCategories">0</div>
+                        <div class="label">Категорий</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-section">
+                <div class="section-header">
+                    <h3 class="section-title">🎨 Дизайн сайта</h3>
+                </div>
+                <div class="tab-nav">
+                    <button class="tab-btn active" onclick="switchTab('colors')">Цвета</button>
+                    <button class="tab-btn" onclick="switchTab('content')">Контент</button>
+                    <button class="tab-btn" onclick="switchTab('layout')">Верстка</button>
+                </div>
+                
+                <div id="colorsTab" class="tab-content active">
+                    <div class="form-group">
+                        <label class="form-label">Основной цвет</label>
+                        <input type="color" class="form-control" id="primaryColor" value="#2563eb" onchange="updateColorScheme()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Второстепенный цвет</label>
+                        <input type="color" class="form-control" id="secondaryColor" value="#7c3aed" onchange="updateColorScheme()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Готовые схемы</label>
+                        <div class="color-picker">
+                            <div class="color-option active" style="background: linear-gradient(135deg, #2563eb, #7c3aed);" onclick="applyPreset('#2563eb', '#7c3aed')"></div>
+                            <div class="color-option" style="background: linear-gradient(135deg, #059669, #0d9488);" onclick="applyPreset('#059669', '#0d9488')"></div>
+                            <div class="color-option" style="background: linear-gradient(135deg, #dc2626, #ea580c);" onclick="applyPreset('#dc2626', '#ea580c')"></div>
+                            <div class="color-option" style="background: linear-gradient(135deg, #7c3aed, #db2777);" onclick="applyPreset('#7c3aed', '#db2777')"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="contentTab" class="tab-content">
+                    <div class="form-group">
+                        <label class="form-label">Заголовок сайта</label>
+                        <input type="text" class="form-control" id="siteTitle" value="Магазин для своих">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Описание сайта</label>
+                        <textarea class="form-control" id="siteDescription" rows="3">Эксклюзивные товары и специальные предложения для нашего круга</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Телефон для связи</label>
+                        <input type="text" class="form-control" id="sitePhone" value="+7 (923) 753-36-06">
+                    </div>
+                </div>
+                
+                <div id="layoutTab" class="tab-content">
+                    <div class="form-group">
+                        <label class="form-label">Стиль карточек товаров</label>
+                        <select class="form-control" id="cardStyle">
+                            <option value="modern">Современный</option>
+                            <option value="minimal">Минималистичный</option>
+                            <option value="classic">Классический</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Цвет фона</label>
+                        <input type="color" class="form-control" id="backgroundColor" value="#f8fafc">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Размер шрифта</label>
+                        <select class="form-control" id="fontSize">
+                            <option value="14px">Мелкий</option>
+                            <option value="16px" selected>Стандартный</option>
+                            <option value="18px">Крупный</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-section">
+                <div class="section-header">
+                    <h3 class="section-title">📦 Управление товарами</h3>
+                    <button class="toggle-btn" onclick="showImportModal()">
+                        <i class="fas fa-file-import"></i>
+                    </button>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Быстрый поиск товара</label>
+                    <input type="text" class="form-control" id="adminSearch" placeholder="Поиск по названию или категории..." onkeyup="searchAdminProducts()">
+                </div>
+                
+                <div style="max-height: 300px; overflow-y: auto; margin-top: 20px;">
+                    <div id="adminProductsList">
+                        <!-- Список товаров для админа -->
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="showAddProductModal()" style="flex: 1;">
+                        <i class="fas fa-plus"></i> Добавить товар
+                    </button>
+                    <button class="btn btn-outline" onclick="exportProducts()">
+                        <i class="fas fa-file-export"></i> Экспорт
+                    </button>
+                </div>
+            </div>
+
+            <div class="admin-section">
+                <div class="section-header">
+                    <h3 class="section-title">📊 Аналитика</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="edit-overlay" id="editOverlay" onclick="closePanel()"></div>
-
-    <!-- Панель редактирования -->
-    <div class="edit-panel" id="editPanel">
-        <div class="edit-panel-content" id="editPanelContent">
-            <!-- Контент будет загружен динамически -->
-        </div>
-        <div style="padding: 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px;">
-            <button class="btn btn-primary" onclick="applyChanges()">Применить</button>
-            <button class="btn btn-outline" onclick="closePanel()">Закрыть</button>
+    <!-- Модальное окно импорта -->
+    <div class="modal" id="importModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">📤 Импорт товаров</h3>
+                <button class="modal-close" onclick="closeModal('importModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="drag-area" id="dragArea" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>Перетащите файл сюда</h3>
+                    <p>или нажмите для выбора файла</p>
+                    <p style="font-size: 12px; color: var(--gray); margin-top: 10px;">
+                        Поддерживаемые форматы: CSV, XLSX, XLS
+                    </p>
+                    <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" style="display: none;" onchange="handleFileSelect(this.files[0])">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Или вставьте данные CSV</label>
+                    <textarea class="form-control" id="csvData" rows="6" placeholder="ID,Категория,Название,Цена,Описание,Фото..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Настройки импорта</label>
+                    <div style="display: flex; gap: 15px; margin-top: 10px;">
+                        <label style="display: flex; align-items: center; gap: 5px;">
+                            <input type="checkbox" id="updateExisting" checked>
+                            <span style="font-size: 14px;">Обновлять существующие</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 5px;">
+                            <input type="checkbox" id="createCategories" checked>
+                            <span style="font-size: 14px;">Создавать категории</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div id="importResults" class="import-results" style="display: none;">
+                    <!-- Результаты импорта -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('importModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="importFromText()">
+                    <i class="fas fa-bolt"></i> Импортировать
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Модальные окна -->
-    <div id="cartModal" class="modal" style="display: none;">
-        <div class="modal-content" style="max-width: 500px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border);">
-                <h3 style="margin: 0;"><i class="fas fa-shopping-cart"></i> Корзина</h3>
-                <button onclick="closeModal('cartModal')" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--gray);">&times;</button>
+    <!-- Модальное окно добавления товара -->
+    <div class="modal" id="addProductModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">➕ Добавить товар</h3>
+                <button class="modal-close" onclick="closeModal('addProductModal')">&times;</button>
             </div>
-            <div id="cartItems">
-                <!-- Товары в корзине -->
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Изображение товара</label>
+                    <div class="file-upload" onclick="document.getElementById('imageUpload').click()">
+                        <i class="fas fa-image"></i>
+                        <p>Нажмите для загрузки изображения</p>
+                        <input type="file" id="imageUpload" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+                        <img id="imagePreview" class="uploaded-image" alt="Предпросмотр">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Название товара *</label>
+                    <input type="text" class="form-control" id="productName" placeholder="Введите название">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Категория *</label>
+                    <select class="form-control" id="productCategory">
+                        <option value="">Выберите категорию</option>
+                    </select>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">Цена *</label>
+                        <input type="number" class="form-control" id="productPrice" placeholder="₽">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Количество *</label>
+                        <input type="number" class="form-control" id="productQuantity" value="10">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Описание</label>
+                    <textarea class="form-control" id="productDescription" rows="4" placeholder="Подробное описание товара"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Бренд</label>
+                    <input type="text" class="form-control" id="productBrand" placeholder="Бренд товара">
+                </div>
             </div>
-            <div id="cartEmpty" style="text-align: center; padding: 40px; color: var(--gray); display: none;">
-                <i class="fas fa-shopping-cart" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
-                <p>Ваша корзина пуста</p>
-            </div>
-            <div id="cartTotal" style="text-align: right; margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--border); font-size: 1.2rem; font-weight: bold; display: none;">
-                Итого: <span id="totalAmount">0</span> ₽
-            </div>
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn btn-primary" onclick="checkout()" style="flex: 1;">Оформить заказ</button>
-                <button class="btn btn-outline" onclick="closeModal('cartModal')">Продолжить покупки</button>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('addProductModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveProduct()">
+                    <i class="fas fa-save"></i> Сохранить товар
+                </button>
             </div>
         </div>
+    </div>
+
+    <!-- Уведомления -->
+    <div class="notification" id="notification">
+        <div class="notification-header">
+            <div class="notification-title" id="notificationTitle">Уведомление</div>
+            <button class="notification-close" onclick="hideNotification()">&times;</button>
+        </div>
+        <div class="notification-message" id="notificationMessage">Сообщение</div>
     </div>
 
     <!-- Хедер -->
-    <header>
+    <header class="main-header">
         <div class="header-top">
-            <div class="container">
-                <div class="header-contacts">
-                    <i class="fas fa-phone"></i> +7 (923) 753-36-06
-                    <span style="margin: 0 15px">|</span>
-                    <i class="fas fa-envelope"></i> prodtorg.barnaul@gmail.com
-                </div>
+            <div style="max-width: 1400px; margin: 0 auto; padding: 0 40px; text-align: center;">
+                <i class="fas fa-phone"></i> +7 (923) 753-36-06
+                <span style="margin: 0 15px">|</span>
+                <i class="fas fa-envelope"></i> prodtorg.barnaul@gmail.com
+                <span style="margin: 0 15px">|</span>
+                <i class="fas fa-clock"></i> Пн-Вс: 9:00-21:00
             </div>
         </div>
-        <div class="header-main">
-            <div class="container">
-                <a href="#" class="logo">D13 - ДЛЯ СВОИХ</a>
-                
-                <div class="search-bar">
-                    <input type="text" id="searchInput" placeholder="Поиск товаров...">
-                    <button onclick="searchProducts()"><i class="fas fa-search"></i></button>
-                </div>
-                
-                <div class="header-actions">
-                    <a href="#" class="header-action" onclick="openProfile(); return false;">
-                        <i class="fas fa-user"></i>
-                        <span>Профиль</span>
-                    </a>
-                    <a href="#" class="header-action" onclick="openCart(); return false;" style="position: relative;">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span>Корзина</span>
-                        <div class="cart-count" id="cartCount">0</div>
-                    </a>
-                    <div class="user-info" id="userInfo">
-                        <div class="user-avatar">А</div>
-                        <div class="user-details">
-                            <div class="user-name">Администратор</div>
-                            <div class="user-role">Администратор</div>
-                        </div>
-                        <button class="logout-btn" onclick="logout()" title="Выйти">
-                            <i class="fas fa-sign-out-alt"></i>
-                        </button>
+        
+        <div class="header-content">
+            <a href="#" class="logo">
+                <div class="logo-icon">D13</div>
+                <div class="logo-text">Для своих</div>
+            </a>
+            
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="Поиск товаров...">
+                <button class="search-btn" onclick="searchProducts()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            
+            <div class="header-actions">
+                <a href="#" class="action-btn" onclick="openProfile(); return false;">
+                    <i class="fas fa-user"></i>
+                    <span>Профиль</span>
+                </a>
+                <a href="#" class="action-btn" onclick="openCart(); return false;">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Корзина</span>
+                    <div class="badge" id="cartBadge">0</div>
+                </a>
+                <div class="user-menu" onclick="toggleAdminPanel()">
+                    <div class="user-avatar">А</div>
+                    <div>
+                        <div class="user-name">Администратор</div>
+                        <div class="user-role">Управление</div>
                     </div>
                 </div>
             </div>
@@ -953,102 +1663,166 @@
     </header>
 
     <!-- Главная секция -->
-    <section class="hero">
+    <section class="hero-section">
+        <div class="hero-bg"></div>
         <div class="hero-content">
-            <h1 id="heroTitle">D13 - Всё для дома и ремонта</h1>
-            <p id="heroText">Товары для дома, хозтовары и профессиональный ремонт техники</p>
-            <button class="btn btn-primary" style="margin-top: 20px; padding: 15px 30px; font-size: 1.1rem;" onclick="scrollToProducts()">
-                <i class="fas fa-shopping-bag"></i> Смотреть товары
+            <h1 class="hero-title" id="mainTitle">Эксклюзивные товары для своих</h1>
+            <p class="hero-subtitle" id="mainSubtitle">Специальные цены, лучшие бренды и персонализированный сервис для нашего круга</p>
+            
+            <button class="btn btn-primary" style="padding: 16px 40px; font-size: 16px;" onclick="scrollToProducts()">
+                <i class="fas fa-shopping-bag"></i> Смотреть каталог
             </button>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalProductsStat">150+</div>
+                    <div class="stat-label">Товаров в каталоге</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="happyClientsStat">500+</div>
+                    <div class="stat-label">Довольных клиентов</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">24/7</div>
+                    <div class="stat-label">Поддержка</div>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- Категории -->
-    <section class="section" style="background: white;">
-        <div class="container">
-            <h2 class="section-title">КАТЕГОРИИ ТОВАРОВ</h2>
-            <div class="categories-grid" id="categoriesGrid">
-                <!-- Категории будут загружены динамически -->
+    <section class="categories-section">
+        <h2 class="section-title">Популярные категории</h2>
+        <div class="categories-grid" id="categoriesGrid">
+            <!-- Категории загружаются динамически -->
+        </div>
+    </section>
+
+    <!-- Преимущества -->
+    <section class="features-section">
+        <h2 class="section-title">Почему выбирают нас</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="feature-title">Гарантия качества</h3>
+                <p class="feature-desc">Все товары проходят тщательную проверку перед отправкой. Гарантия на всю продукцию.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <h3 class="feature-title">Быстрая доставка</h3>
+                <p class="feature-desc">Доставка по всему городу в течение 24 часов. Бесплатная доставка при заказе от 3000₽.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-percent"></i>
+                </div>
+                <h3 class="feature-title">Специальные цены</h3>
+                <p class="feature-desc">Эксклюзивные цены для участников клуба. Регулярные акции и скидки.</p>
             </div>
         </div>
     </section>
 
     <!-- Товары -->
-    <section class="section" id="productsSection">
-        <div class="container">
-            <div class="products-header">
-                <h2 class="section-title" style="text-align: left; margin: 0;">ВСЕ ТОВАРЫ</h2>
-                <div class="filters">
-                    <select class="filter-select" id="categoryFilter" onchange="filterProducts()">
-                        <option value="">Все категории</option>
-                    </select>
-                    <select class="filter-select" id="priceFilter" onchange="filterProducts()">
-                        <option value="">Любая цена</option>
-                        <option value="0-500">До 500 руб.</option>
-                        <option value="500-1000">500-1000 руб.</option>
-                        <option value="1000-5000">1000-5000 руб.</option>
-                        <option value="5000-999999">От 5000 руб.</option>
-                    </select>
-                    <select class="filter-select" id="sortBy" onchange="sortProducts()">
-                        <option value="name">Сортировка</option>
-                        <option value="price_asc">Цена (по возрастанию)</option>
-                        <option value="price_desc">Цена (по убыванию)</option>
-                        <option value="name">По названию</option>
-                    </select>
-                </div>
+    <section class="products-section" id="productsSection">
+        <div class="products-header">
+            <h2 class="section-title" style="margin: 0;">Рекомендуемые товары</h2>
+            <div class="filters">
+                <select class="filter-select" id="categoryFilter" onchange="filterProducts()">
+                    <option value="">Все категории</option>
+                </select>
+                <select class="filter-select" id="priceFilter" onchange="filterProducts()">
+                    <option value="">Любая цена</option>
+                    <option value="0-500">До 500₽</option>
+                    <option value="500-2000">500-2000₽</option>
+                    <option value="2000-5000">2000-5000₽</option>
+                    <option value="5000-999999">От 5000₽</option>
+                </select>
+                <select class="filter-select" id="sortFilter" onchange="sortProducts()">
+                    <option value="popular">По популярности</option>
+                    <option value="price_asc">Цена по возрастанию</option>
+                    <option value="price_desc">Цена по убыванию</option>
+                    <option value="new">Новинки</option>
+                </select>
             </div>
-            <div class="products-grid" id="productsGrid">
-                <!-- Товары будут загружены динамически -->
-            </div>
+        </div>
+        
+        <div class="products-grid" id="productsGrid">
+            <!-- Товары загружаются динамически -->
+        </div>
+        
+        <div style="text-align: center; margin-top: 50px;">
+            <button class="btn btn-outline" onclick="loadMoreProducts()" style="padding: 14px 40px;">
+                <i class="fas fa-sync-alt"></i> Показать еще
+            </button>
         </div>
     </section>
 
     <!-- Футер -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>О магазине</h3>
-                    <p style="color: #bdc3c7; line-height: 1.6;">
-                        D13 - профессиональный сервис по ремонту техники и магазин товаров для дома. 
-                        Мы работаем на рынке более 5 лет и заслужили доверие тысяч клиентов.
-                    </p>
-                </div>
-                <div class="footer-column">
-                    <h3>Контакты</h3>
-                    <ul>
-                        <li><i class="fas fa-phone"></i> +7 (923) 753-36-06</li>
-                        <li><i class="fas fa-envelope"></i> prodtorg.barnaul@gmail.com</li>
-                        <li><i class="fas fa-map-marker-alt"></i> г. Барнаул, ул. Островского, 10</li>
-                        <li><i class="fas fa-clock"></i> Пн-Вс: 9:00-21:00</li>
-                    </ul>
-                </div>
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div>
+                <h3>О магазине</h3>
+                <p style="color: #94a3b8; line-height: 1.7; margin-top: 15px;">
+                    Закрытый магазин для друзей и близких. 
+                    Специальные цены, эксклюзивные товары и регулярные розыгрыши призов.
+                </p>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 D13 - Магазин "Для своих". Все права защищены.</p>
+            <div>
+                <h3>Категории</h3>
+                <ul class="footer-links" id="footerCategories">
+                    <!-- Категории загружаются динамически -->
+                </ul>
             </div>
+            <div>
+                <h3>Помощь</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                    <li><a href="#"><i class="fas fa-truck"></i> Доставка</a></li>
+                    <li><a href="#"><i class="fas fa-undo"></i> Возврат</a></li>
+                    <li><a href="#"><i class="fas fa-shield-alt"></i> Гарантия</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Контакты</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-phone"></i> +7 (923) 753-36-06</a></li>
+                    <li><a href="#"><i class="fas fa-envelope"></i> prodtorg.barnaul@gmail.com</a></li>
+                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> г. Барнаул</a></li>
+                    <li><a href="#"><i class="fas fa-clock"></i> Пн-Вс: 9:00-21:00</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 Магазин "Для своих". Все права защищены.</p>
         </div>
     </footer>
 
     <script>
-        // ==================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ====================
+        // ==================== ОСНОВНЫЕ ДАННЫЕ ====================
         let products = JSON.parse(localStorage.getItem('products')) || [];
         let categories = JSON.parse(localStorage.getItem('categories')) || [
-            { id: 1, name: 'Бытовая химия', icon: '🧴', description: 'Моющие средства, стиральные порошки, гели для душа' },
-            { id: 2, name: 'Электроинструмент', icon: '🔧', description: 'Профессиональные инструменты для ремонта' },
-            { id: 3, name: 'Аккумуляторы', icon: '🔋', description: 'Аккумуляторы для электротранспорта и инструментов' },
-            { id: 4, name: 'Хозтовары', icon: '🏠', description: 'Товары для дома и быта' }
+            { id: 1, name: 'Бытовая химия', icon: '🧴', description: 'Моющие средства, гели, порошки' },
+            { id: 2, name: 'Электроника', icon: '📱', description: 'Гаджеты и аксессуары' },
+            { id: 3, name: 'Инструменты', icon: '🔧', description: 'Профессиональные инструменты' },
+            { id: 4, name: 'Автотовары', icon: '🚗', description: 'Автомобильная химия и аксессуары' },
+            { id: 5, name: 'Спорт', icon: '⚽', description: 'Спортивные товары и инвентарь' }
         ];
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         let orders = JSON.parse(localStorage.getItem('orders')) || [];
-        let filteredProducts = [...products];
-        let currentUser = { name: 'Администратор', role: 'admin', email: 'admin@myshop.ru' };
+        let filteredProducts = [];
+        let currentPage = 1;
+        const productsPerPage = 6;
+        
         let siteSettings = JSON.parse(localStorage.getItem('siteSettings')) || {
-            heroTitle: 'D13 - Всё для дома и ремонта',
-            heroText: 'Товары для дома, хозтовары и профессиональный ремонт техники',
-            background: 'gradient',
-            primaryColor: '#2c5aa0',
-            secondaryColor: '#1a3a6b'
+            primaryColor: '#2563eb',
+            secondaryColor: '#7c3aed',
+            siteTitle: 'Эксклюзивные товары для своих',
+            siteDescription: 'Специальные цены, лучшие бренды и персонализированный сервис для нашего круга'
         };
 
         // ==================== ИНИЦИАЛИЗАЦИЯ ====================
@@ -1058,36 +1832,32 @@
             loadProducts();
             updateCartCount();
             updateCategoryFilter();
+            updateStats();
+            loadAdminProducts();
+            initChart();
             
-            // Добавляем тестовые товары если их нет
             if (products.length === 0) {
                 addSampleProducts();
             }
-        });
-
-        function initSite() {
-            // Применяем сохраненные настройки
-            applySiteSettings();
             
             // Настройка поиска
             document.getElementById('searchInput').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') searchProducts();
             });
-        }
+            
+            // Настройка drag & drop
+            setupDragAndDrop();
+            
+            // Применяем сохраненные настройки
+            applySiteSettings();
+        });
 
-        function applySiteSettings() {
-            if (siteSettings.background === 'gradient') {
-                document.querySelector('.hero').style.background = 
-                    `linear-gradient(135deg, ${siteSettings.primaryColor}, ${siteSettings.secondaryColor})`;
-            }
+        function initSite() {
+            // Обновляем статистику
+            updateStats();
             
-            if (siteSettings.heroTitle) {
-                document.getElementById('heroTitle').textContent = siteSettings.heroTitle;
-            }
-            
-            if (siteSettings.heroText) {
-                document.getElementById('heroText').textContent = siteSettings.heroText;
-            }
+            // Загружаем товары для админки
+            loadAdminProducts();
         }
 
         function addSampleProducts() {
@@ -1102,7 +1872,8 @@
                     status: 'in_stock',
                     description: 'Концентрированное средство для мытья посуды. Объем: 5 литров. Аромат: Банан.',
                     image: 'https://i.postimg.cc/0ypWMS33/FAIRY-BANANE-5-litrov.jpg',
-                    brand: 'FAIRY'
+                    brand: 'FAIRY',
+                    tags: ['хит', 'скидка']
                 },
                 {
                     id: 1002,
@@ -1114,48 +1885,107 @@
                     status: 'in_stock',
                     description: 'Универсальное чистящее средство для всех поверхностей.',
                     image: 'https://i.postimg.cc/VkjGrtT3/ASH20-cistasee-sredstvo-5-litrov.jpg',
-                    brand: 'ASH20'
+                    brand: 'ASH20',
+                    tags: ['новинка']
+                },
+                {
+                    id: 1003,
+                    name: 'Ушастый нянь - 5 литров',
+                    category: 'Бытовая химия',
+                    price: 900,
+                    oldPrice: 1100,
+                    quantity: 12,
+                    status: 'in_stock',
+                    description: 'Гипоаллергенное средство для стирки детского белья.',
+                    image: 'https://i.postimg.cc/PqT6mxnj/Usastyj-nan-5-litrov.jpg',
+                    brand: 'Ушастый нянь',
+                    tags: ['хит', 'скидка']
+                },
+                {
+                    id: 1004,
+                    name: 'Перфоратор профессиональный',
+                    category: 'Инструменты',
+                    price: 12500,
+                    oldPrice: 15000,
+                    quantity: 5,
+                    status: 'in_stock',
+                    description: 'Мощный перфоратор для профессионального использования.',
+                    image: 'https://via.placeholder.com/400x300/3b82f6/ffffff?text=Перфоратор',
+                    brand: 'Bosch',
+                    tags: ['новинка', 'скидка']
+                },
+                {
+                    id: 1005,
+                    name: 'Автомобильный освежитель',
+                    category: 'Автотовары',
+                    price: 350,
+                    oldPrice: null,
+                    quantity: 25,
+                    status: 'in_stock',
+                    description: 'Освежитель воздуха для автомобиля с ароматом свежести.',
+                    image: 'https://via.placeholder.com/400x300/10b981/ffffff?text=Освежитель',
+                    brand: 'AirFresh',
+                    tags: []
+                },
+                {
+                    id: 1006,
+                    name: 'Фитнес-браслет с пульсометром',
+                    category: 'Спорт',
+                    price: 2500,
+                    oldPrice: 3200,
+                    quantity: 7,
+                    status: 'in_stock',
+                    description: 'Умный браслет для отслеживания активности и сна.',
+                    image: 'https://via.placeholder.com/400x300/8b5cf6/ffffff?text=Фитнес-браслет',
+                    brand: 'Xiaomi',
+                    tags: ['хит', 'скидка']
                 }
             ];
             
-            products.push(...sampleProducts);
+            products = sampleProducts;
             filteredProducts = [...products];
             saveData('products', products);
             loadProducts();
+            updateCategoryFilter();
+            updateStats();
         }
 
-        // ==================== ФУНКЦИИ ДЛЯ ТОВАРОВ ====================
+        // ==================== ФУНКЦИИ САЙТА ====================
         function loadProducts() {
             const productsGrid = document.getElementById('productsGrid');
+            const startIndex = (currentPage - 1) * productsPerPage;
+            const endIndex = startIndex + productsPerPage;
+            const productsToShow = filteredProducts.slice(0, endIndex);
             
-            if (filteredProducts.length === 0) {
+            if (productsToShow.length === 0) {
                 productsGrid.innerHTML = `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px;">
-                        <i class="fas fa-box-open" style="font-size: 4rem; color: var(--gray-light); margin-bottom: 20px;"></i>
-                        <h3 style="color: var(--gray); margin-bottom: 15px;">Товары не найдены</h3>
-                        <p style="color: var(--gray);">Попробуйте изменить параметры фильтрации</p>
+                    <div class="empty-state">
+                        <i class="fas fa-box-open"></i>
+                        <h3>Товары не найдены</h3>
+                        <p>Попробуйте изменить параметры фильтрации или поиска</p>
+                        <button class="btn btn-primary" onclick="resetFilters()">
+                            <i class="fas fa-redo"></i> Сбросить фильтры
+                        </button>
                     </div>
                 `;
                 return;
             }
-
-            productsGrid.innerHTML = filteredProducts.map(product => {
+            
+            productsGrid.innerHTML = productsToShow.map(product => {
                 const discount = product.oldPrice ? 
                     Math.round((1 - product.price / product.oldPrice) * 100) : 0;
-                const statusClass = `status-${product.status.replace('_', '-')}`;
                 const statusText = getStatusText(product.status);
+                const badge = getProductBadge(product.tags);
                 
                 return `
                     <div class="product-card">
-                        ${discount > 0 ? `<div class="product-badge">-${discount}%</div>` : ''}
-                        <div class="product-image-container">
-                            <img src="${product.image}" alt="${product.name}" class="product-image"
-                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200/ecf0f1/7f8c8d?text=Нет+фото'">
-                        </div>
+                        ${badge}
+                        <img src="${product.image}" alt="${product.name}" class="product-image"
+                             onerror="this.onerror=null; this.src='https://via.placeholder.com/400x300/e2e8f0/64748b?text=Нет+фото'">
                         <div class="product-info">
-                            <div class="product-category">${product.category}</div>
-                            <h3 class="product-name">${product.name}</h3>
-                            <div class="product-description-short">${product.description.substring(0, 100)}...</div>
+                            <span class="product-category">${product.category}</span>
+                            <h3 class="product-title">${product.name}</h3>
+                            <p class="product-description">${product.description}</p>
                             
                             <div class="product-price">
                                 <span class="current-price">${product.price.toLocaleString()} ₽</span>
@@ -1163,33 +1993,77 @@
                                 ${discount > 0 ? `<span class="discount">-${discount}%</span>` : ''}
                             </div>
                             
-                            <div class="product-status ${statusClass}">
-                                ${statusText} ${product.quantity > 0 ? `(${product.quantity} шт.)` : ''}
+                            <div class="product-stats">
+                                <div class="stat">
+                                    <div class="stat-value">${product.quantity}</div>
+                                    <div class="stat-label">В наличии</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-value">${product.brand || 'Без бренда'}</div>
+                                    <div class="stat-label">Бренд</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-value">${statusText}</div>
+                                    <div class="stat-label">Статус</div>
+                                </div>
                             </div>
                             
                             <div class="product-actions">
-                                <button class="btn btn-primary add-to-cart" onclick="addToCart(${product.id})" 
+                                <button class="btn btn-primary" onclick="addToCart(${product.id})" 
                                         ${product.status !== 'in_stock' || product.quantity <= 0 ? 'disabled' : ''}>
-                                    <i class="fas fa-shopping-cart"></i>
-                                    ${product.status === 'in_stock' && product.quantity > 0 ? 'В корзину' : 'Нет в наличии'}
+                                    <i class="fas fa-cart-plus"></i> В корзину
                                 </button>
-                                <button class="btn btn-outline" onclick="showProductDetails(${product.id})">
-                                    <i class="fas fa-info"></i>
+                                <button class="btn btn-icon" onclick="showProductDetails(${product.id})">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-icon" onclick="addToFavorites(${product.id})">
+                                    <i class="far fa-heart"></i>
                                 </button>
                             </div>
                         </div>
                     </div>
                 `;
             }).join('');
+            
+            // Показываем кнопку "Показать еще" если есть еще товары
+            const loadMoreBtn = document.querySelector('.btn-outline');
+            if (loadMoreBtn) {
+                loadMoreBtn.style.display = endIndex >= filteredProducts.length ? 'none' : 'inline-flex';
+            }
+        }
+
+        function getProductBadge(tags) {
+            if (!tags || tags.length === 0) return '';
+            
+            let badge = '<div class="product-badges">';
+            
+            if (tags.includes('новинка')) {
+                badge += '<span class="product-badge badge-new">Новинка</span>';
+            }
+            if (tags.includes('скидка')) {
+                badge += '<span class="product-badge badge-sale">Скидка</span>';
+            }
+            if (tags.includes('хит')) {
+                badge += '<span class="product-badge badge-hit">Хит</span>';
+            }
+            
+            badge += '</div>';
+            return badge;
         }
 
         function getStatusText(status) {
             const statuses = {
                 'in_stock': 'В наличии',
                 'out_of_stock': 'Нет в наличии',
-                'pre_order': 'Под заказ'
+                'pre_order': 'Под заказ',
+                'coming_soon': 'Скоро в продаже'
             };
             return statuses[status] || status;
+        }
+
+        function loadMoreProducts() {
+            currentPage++;
+            loadProducts();
         }
 
         function filterProducts() {
@@ -1205,11 +2079,12 @@
                 return true;
             });
             
+            currentPage = 1;
             loadProducts();
         }
 
         function sortProducts() {
-            const sortBy = document.getElementById('sortBy').value;
+            const sortBy = document.getElementById('sortFilter').value;
             
             switch(sortBy) {
                 case 'price_asc':
@@ -1218,11 +2093,25 @@
                 case 'price_desc':
                     filteredProducts.sort((a, b) => b.price - a.price);
                     break;
-                case 'name':
-                    filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+                case 'new':
+                    filteredProducts.sort((a, b) => b.id - a.id);
+                    break;
+                case 'popular':
+                default:
+                    // Можно добавить логику сортировки по популярности
                     break;
             }
             
+            currentPage = 1;
+            loadProducts();
+        }
+
+        function resetFilters() {
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('priceFilter').value = '';
+            document.getElementById('sortFilter').value = 'popular';
+            filteredProducts = [...products];
+            currentPage = 1;
             loadProducts();
         }
 
@@ -1240,22 +2129,36 @@
                 );
             }
             
+            currentPage = 1;
             loadProducts();
-        }
-
-        function scrollToProducts() {
-            document.getElementById('productsSection').scrollIntoView({ behavior: 'smooth' });
+            
+            // Показываем уведомление о результатах поиска
+            if (filteredProducts.length === 0) {
+                showNotification(`По запросу "${searchTerm}" ничего не найдено`, 'info');
+            } else {
+                showNotification(`Найдено ${filteredProducts.length} товаров`, 'success');
+            }
         }
 
         // ==================== КАТЕГОРИИ ====================
         function loadCategories() {
             const categoriesGrid = document.getElementById('categoriesGrid');
+            const footerCategories = document.getElementById('footerCategories');
+            
+            // Основная сетка категорий
             categoriesGrid.innerHTML = categories.map(category => `
                 <div class="category-card" onclick="filterByCategory('${category.name}')">
                     <span class="category-icon">${category.icon}</span>
-                    <h3>${category.name}</h3>
-                    <p class="category-description">${category.description}</p>
+                    <h3 class="category-title">${category.name}</h3>
+                    <p class="category-desc">${category.description}</p>
                 </div>
+            `).join('');
+            
+            // Категории в футере
+            footerCategories.innerHTML = categories.map(category => `
+                <li><a href="#" onclick="filterByCategory('${category.name}'); return false;">
+                    <i class="fas fa-chevron-right"></i> ${category.name}
+                </a></li>
             `).join('');
         }
 
@@ -1263,6 +2166,7 @@
             document.getElementById('categoryFilter').value = categoryName;
             filterProducts();
             scrollToProducts();
+            showNotification(`Показаны товары категории: ${categoryName}`, 'success');
         }
 
         function updateCategoryFilter() {
@@ -1305,217 +2209,198 @@
             saveData('cart', cart);
             updateCartCount();
             showNotification('Товар добавлен в корзину!', 'success');
+            
+            // Анимация добавления в корзину
+            animateCartAdd();
+        }
+
+        function animateCartAdd() {
+            const cartBadge = document.getElementById('cartBadge');
+            cartBadge.style.transform = 'scale(1.5)';
+            setTimeout(() => {
+                cartBadge.style.transform = 'scale(1)';
+            }, 300);
         }
 
         function updateCartCount() {
             const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-            document.getElementById('cartCount').textContent = totalItems;
+            document.getElementById('cartBadge').textContent = totalItems;
         }
 
         function openCart() {
-            const modal = document.getElementById('cartModal');
-            const cartItems = document.getElementById('cartItems');
-            const cartEmpty = document.getElementById('cartEmpty');
-            const cartTotal = document.getElementById('cartTotal');
-            const totalAmount = document.getElementById('totalAmount');
+            showNotification('Корзина пока не реализована в этой демо-версии', 'info');
+        }
+
+        // ==================== АДМИН ПАНЕЛЬ ====================
+        function toggleAdminPanel() {
+            const panel = document.getElementById('adminPanel');
+            panel.classList.toggle('open');
+        }
+
+        function switchTab(tabName) {
+            // Скрыть все табы
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
             
-            if (cart.length === 0) {
-                cartItems.innerHTML = '';
-                cartEmpty.style.display = 'block';
-                cartTotal.style.display = 'none';
-            } else {
-                cartItems.innerHTML = cart.map(item => `
-                    <div style="display: flex; align-items: center; gap: 15px; padding: 15px; border-bottom: 1px solid var(--border);">
-                        <img src="${item.image}" alt="${item.name}" 
-                             style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;"
-                             onerror="this.src='https://via.placeholder.com/60x60/ecf0f1/7f8c8d?text=Нет'">
-                        <div style="flex: 1;">
-                            <div style="font-weight: bold; margin-bottom: 5px;">${item.name}</div>
-                            <div style="color: var(--primary); font-weight: bold;">${item.price} ₽ × ${item.quantity}</div>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <button onclick="updateCartQuantity(${item.id}, -1)" 
-                                    style="width: 30px; height: 30px; border: 1px solid var(--border); border-radius: 50%; background: white; cursor: pointer;">
-                                -
-                            </button>
-                            <span>${item.quantity}</span>
-                            <button onclick="updateCartQuantity(${item.id}, 1)"
-                                    ${item.quantity >= item.maxQuantity ? 'disabled' : ''}
-                                    style="width: 30px; height: 30px; border: 1px solid var(--border); border-radius: 50%; background: white; cursor: pointer; ${item.quantity >= item.maxQuantity ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
-                                +
-                            </button>
-                            <button onclick="removeFromCart(${item.id})" 
-                                    style="background: var(--danger); color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; margin-left: 10px;">
-                                <i class="fas fa-trash" style="font-size: 12px;"></i>
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
-                
-                const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-                totalAmount.textContent = total.toLocaleString();
-                cartEmpty.style.display = 'none';
-                cartTotal.style.display = 'block';
+            // Убрать активный класс со всех кнопок
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Показать выбранный таб
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            
+            // Активировать соответствующую кнопку
+            event.target.classList.add('active');
+        }
+
+        function applyPreset(primary, secondary) {
+            document.getElementById('primaryColor').value = primary;
+            document.getElementById('secondaryColor').value = secondary;
+            updateColorScheme();
+            
+            // Обновляем активную кнопку
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function updateColorScheme() {
+            const primary = document.getElementById('primaryColor').value;
+            const secondary = document.getElementById('secondaryColor').value;
+            
+            // Обновляем CSS переменные
+            document.documentElement.style.setProperty('--primary', primary);
+            document.documentElement.style.setProperty('--primary-dark', darkenColor(primary, 20));
+            document.documentElement.style.setProperty('--primary-light', lightenColor(primary, 20));
+            document.documentElement.style.setProperty('--secondary', secondary);
+            
+            // Сохраняем настройки
+            siteSettings.primaryColor = primary;
+            siteSettings.secondaryColor = secondary;
+            saveData('siteSettings', siteSettings);
+            
+            showNotification('Цветовая схема обновлена', 'success');
+        }
+
+        function applySiteSettings() {
+            // Применяем цвета
+            if (siteSettings.primaryColor) {
+                document.documentElement.style.setProperty('--primary', siteSettings.primaryColor);
+                document.getElementById('primaryColor').value = siteSettings.primaryColor;
+            }
+            if (siteSettings.secondaryColor) {
+                document.documentElement.style.setProperty('--secondary', siteSettings.secondaryColor);
+                document.getElementById('secondaryColor').value = siteSettings.secondaryColor;
             }
             
-            modal.style.display = 'block';
+            // Применяем тексты
+            if (siteSettings.siteTitle) {
+                document.getElementById('mainTitle').textContent = siteSettings.siteTitle;
+                document.getElementById('siteTitle').value = siteSettings.siteTitle;
+            }
+            if (siteSettings.siteDescription) {
+                document.getElementById('mainSubtitle').textContent = siteSettings.siteDescription;
+                document.getElementById('siteDescription').value = siteSettings.siteDescription;
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('statProducts').textContent = products.length;
+            document.getElementById('statCategories').textContent = categories.length;
+            document.getElementById('statOrders').textContent = orders.length;
+            
+            // Выручка (сумма всех заказов)
+            const revenue = orders.reduce((sum, order) => sum + order.total, 0);
+            document.getElementById('statRevenue').textContent = revenue.toLocaleString() + '₽';
+            
+            // Статистика на главной
+            document.getElementById('totalProductsStat').textContent = products.length + '+';
+            document.getElementById('happyClientsStat').textContent = (orders.length * 2) + '+';
+        }
+
+        function loadAdminProducts() {
+            const adminList = document.getElementById('adminProductsList');
+            
+            if (products.length === 0) {
+                adminList.innerHTML = '<p style="text-align: center; color: var(--gray); padding: 20px;">Товаров нет</p>';
+                return;
+            }
+            
+            // Показываем первые 5 товаров
+            const productsToShow = products.slice(0, 5);
+            
+            adminList.innerHTML = productsToShow.map(product => `
+                <div class="admin-product-item" style="display: flex; align-items: center; gap: 12px; padding: 12px; background: white; border-radius: var(--radius); margin-bottom: 10px; border: 1px solid var(--border);">
+                    <img src="${product.image}" alt="${product.name}" 
+                         style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;"
+                         onerror="this.src='https://via.placeholder.com/40x40/e2e8f0/64748b?text=Нет'">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; font-size: 14px;">${product.name}</div>
+                        <div style="font-size: 12px; color: var(--gray);">${product.category} • ${product.price}₽</div>
+                    </div>
+                    <div style="display: flex; gap: 5px;">
+                        <button onclick="editProduct(${product.id})" style="width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--border); background: white; cursor: pointer; color: var(--primary);">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteProduct(${product.id})" style="width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--danger); background: white; cursor: pointer; color: var(--danger);">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function searchAdminProducts() {
+            const searchTerm = document.getElementById('adminSearch').value.toLowerCase();
+            const items = document.querySelectorAll('.admin-product-item');
+            
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(searchTerm) ? 'flex' : 'none';
+            });
+        }
+
+        function showImportModal() {
+            document.getElementById('importModal').style.display = 'flex';
         }
 
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
         }
 
-        function updateCartQuantity(productId, change) {
-            const item = cart.find(item => item.id === productId);
-            if (!item) return;
+        function showAddProductModal() {
+            // Заполняем список категорий
+            const categorySelect = document.getElementById('productCategory');
+            categorySelect.innerHTML = '<option value="">Выберите категорию</option>' +
+                categories.map(cat => `<option value="${cat.name}">${cat.name}</option>`).join('');
             
-            const newQuantity = item.quantity + change;
-            
-            if (newQuantity < 1) {
-                removeFromCart(productId);
-                return;
-            }
-            
-            if (newQuantity > item.maxQuantity) {
-                showNotification(`Максимальное количество: ${item.maxQuantity}`, 'error');
-                return;
-            }
-            
-            item.quantity = newQuantity;
-            saveData('cart', cart);
-            updateCartCount();
-            openCart();
-        }
-
-        function removeFromCart(productId) {
-            cart = cart.filter(item => item.id !== productId);
-            saveData('cart', cart);
-            updateCartCount();
-            openCart();
-            showNotification('Товар удален из корзины', 'info');
-        }
-
-        function checkout() {
-            if (cart.length === 0) {
-                showNotification('Корзина пуста', 'error');
-                return;
-            }
-            
-            // Проверка наличия товаров
-            for (const item of cart) {
-                const product = products.find(p => p.id === item.id);
-                if (!product || product.quantity < item.quantity) {
-                    showNotification(`Товар "${item.name}" временно недоступен в нужном количестве`, 'error');
-                    return;
-                }
-            }
-            
-            // Обновление количества товаров
-            cart.forEach(item => {
-                const product = products.find(p => p.id === item.id);
-                if (product) {
-                    product.quantity -= item.quantity;
-                    if (product.quantity <= 0) {
-                        product.status = 'out_of_stock';
-                    }
-                }
-            });
-            
-            // Создание заказа
-            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const newOrder = {
-                id: orders.length > 0 ? Math.max(...orders.map(o => o.id)) + 1 : 1,
-                date: new Date().toISOString(),
-                items: [...cart],
-                total: total,
-                status: 'pending',
-                customer: currentUser.name
-            };
-            
-            orders.push(newOrder);
-            saveData('orders', orders);
-            saveData('products', products);
-            
-            // Очистка корзины
-            cart = [];
-            saveData('cart', cart);
-            updateCartCount();
-            closeModal('cartModal');
-            
-            showNotification(`Заказ оформлен! Сумма: ${total.toLocaleString()} ₽`, 'success');
-            
-            // Обновление списка товаров
-            filteredProducts = [...products];
-            loadProducts();
+            document.getElementById('addProductModal').style.display = 'flex';
         }
 
         // ==================== ИМПОРТ ТОВАРОВ ====================
-        function showImportPanel() {
-            document.getElementById('editOverlay').style.display = 'block';
-            document.getElementById('editPanel').style.display = 'block';
+        function setupDragAndDrop() {
+            const dragArea = document.getElementById('dragArea');
             
-            document.getElementById('editPanelContent').innerHTML = `
-                <h3 style="margin-bottom: 20px;"><i class="fas fa-file-import"></i> Импорт товаров</h3>
-                
-                <div style="margin-bottom: 25px;">
-                    <h4 style="margin-bottom: 15px; color: var(--dark);">📥 Загрузка файла</h4>
-                    <div style="border: 2px dashed var(--border); border-radius: var(--radius); padding: 30px; text-align: center; cursor: pointer;"
-                         onclick="document.getElementById('fileInput').click()"
-                         ondrop="handleDrop(event)"
-                         ondragover="handleDragOver(event)"
-                         id="dropZone">
-                        <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--gray-light); margin-bottom: 15px;"></i>
-                        <p style="margin-bottom: 10px; font-weight: bold;">Перетащите файл сюда или нажмите для выбора</p>
-                        <p style="color: var(--gray); font-size: 0.9rem;">Поддерживаемые форматы: CSV, XLSX, XLS</p>
-                        <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" style="display: none;" onchange="handleFileSelect(this.files[0])">
-                    </div>
-                </div>
-                
-                <div style="margin-bottom: 25px;">
-                    <h4 style="margin-bottom: 15px; color: var(--dark);">📋 Структура файла</h4>
-                    <div style="background: var(--light); padding: 15px; border-radius: var(--radius); font-size: 0.9rem;">
-                        <p><strong>Обязательные поля:</strong> ID товара, Категория, Название товара, Цена продажи</p>
-                        <p><strong>Рекомендуемые поля:</strong> Описание, В наличии, Фото (URL ссылка), Бренд</p>
-                        <p><strong>Пример структуры CSV:</strong></p>
-                        <pre style="background: white; padding: 10px; border-radius: 5px; overflow-x: auto;">
-ID товара,Категория,Название товара,Бренд,Описание,Цена продажи,В наличии,Фото (URL ссылка)
-BH-001,Бытовая химия,FAIRY banane - 5 литров,FAIRY,"Описание товара",800,да,https://example.com/photo.jpg</pre>
-                    </div>
-                </div>
-                
-                <div style="margin-bottom: 25px;">
-                    <h4 style="margin-bottom: 15px; color: var(--dark);">⚡ Быстрый импорт из текста</h4>
-                    <textarea id="quickImport" placeholder="Вставьте данные в формате CSV здесь..." 
-                              style="width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: var(--radius); font-family: monospace; min-height: 150px;"></textarea>
-                    <button onclick="importFromText()" class="btn btn-primary" style="margin-top: 10px;">
-                        <i class="fas fa-bolt"></i> Импортировать из текста
-                    </button>
-                </div>
-                
-                <div id="importResults" style="display: none;">
-                    <!-- Результаты импорта будут отображены здесь -->
-                </div>
-            `;
-        }
-
-        function handleDragOver(event) {
-            event.preventDefault();
-            event.stopPropagation();
-            event.dataTransfer.dropEffect = 'copy';
-            document.getElementById('dropZone').style.borderColor = 'var(--primary)';
-            document.getElementById('dropZone').style.background = 'rgba(44, 90, 160, 0.05)';
-        }
-
-        function handleDrop(event) {
-            event.preventDefault();
-            event.stopPropagation();
-            document.getElementById('dropZone').style.borderColor = 'var(--border)';
-            document.getElementById('dropZone').style.background = '';
+            dragArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                dragArea.classList.add('drag-over');
+            });
             
-            const files = event.dataTransfer.files;
-            if (files.length > 0) {
-                handleFileSelect(files[0]);
-            }
+            dragArea.addEventListener('dragleave', function() {
+                dragArea.classList.remove('drag-over');
+            });
+            
+            dragArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                dragArea.classList.remove('drag-over');
+                
+                if (e.dataTransfer.files.length) {
+                    handleFileSelect(e.dataTransfer.files[0]);
+                }
+            });
         }
 
         function handleFileSelect(file) {
@@ -1566,7 +2451,7 @@ BH-001,Бытовая химия,FAIRY banane - 5 литров,FAIRY,"Описа
                     for (let i = 1; i < lines.length; i++) {
                         if (lines[i].trim() === '') continue;
                         
-                        const values = lines[i].split(',').map(v => v.trim());
+                        const values = parseCSVLine(lines[i]);
                         if (values.length !== headers.length) continue;
                         
                         const row = {};
@@ -1584,39 +2469,6 @@ BH-001,Бытовая химия,FAIRY banane - 5 литров,FAIRY,"Описа
             };
             
             reader.readAsText(file, 'UTF-8');
-        }
-
-        function importFromText() {
-            const text = document.getElementById('quickImport').value.trim();
-            if (!text) {
-                showNotification('Введите данные для импорта', 'error');
-                return;
-            }
-            
-            try {
-                const lines = text.split('\n');
-                const headers = lines[0].split(',').map(h => h.trim());
-                
-                const jsonData = [];
-                for (let i = 1; i < lines.length; i++) {
-                    if (lines[i].trim() === '') continue;
-                    
-                    // Обрабатываем строку с учетом запятых внутри кавычек
-                    const values = parseCSVLine(lines[i]);
-                    if (values.length !== headers.length) continue;
-                    
-                    const row = {};
-                    headers.forEach((header, index) => {
-                        row[header] = values[index].trim();
-                    });
-                    jsonData.push(row);
-                }
-                
-                processImportData(jsonData, 'текста');
-            } catch (error) {
-                console.error('Ошибка импорта из текста:', error);
-                showNotification('❌ Ошибка при импорте из текста', 'error');
-            }
         }
 
         function parseCSVLine(line) {
@@ -1638,7 +2490,39 @@ BH-001,Бытовая химия,FAIRY banane - 5 литров,FAIRY,"Описа
             }
             
             result.push(current);
-            return result;
+            return result.map(v => v.trim().replace(/^"|"$/g, ''));
+        }
+
+        function importFromText() {
+            const text = document.getElementById('csvData').value.trim();
+            if (!text) {
+                showNotification('Введите данные для импорта', 'error');
+                return;
+            }
+            
+            try {
+                const lines = text.split('\n');
+                const headers = lines[0].split(',').map(h => h.trim());
+                
+                const jsonData = [];
+                for (let i = 1; i < lines.length; i++) {
+                    if (lines[i].trim() === '') continue;
+                    
+                    const values = parseCSVLine(lines[i]);
+                    if (values.length !== headers.length) continue;
+                    
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header] = values[index];
+                    });
+                    jsonData.push(row);
+                }
+                
+                processImportData(jsonData, 'текста');
+            } catch (error) {
+                console.error('Ошибка импорта из текста:', error);
+                showNotification('❌ Ошибка при импорте из текста', 'error');
+            }
         }
 
         function processImportData(jsonData, sourceType) {
@@ -1652,105 +2536,52 @@ BH-001,Бытовая химия,FAIRY banane - 5 литров,FAIRY,"Описа
             let errorCount = 0;
             let newCategories = new Set();
             
-            // Определяем сопоставление заголовков
-            const headerMapping = {
-                'id товара': 'id',
-                'код_товара': 'id',
-                'категория': 'category',
-                'название товара': 'name',
-                'название': 'name',
-                'бренд': 'brand',
-                'описание': 'description',
-                'цена продажи': 'price',
-                'цена_продажи': 'price',
-                'цена': 'price',
-                'в наличии': 'quantity',
-                'количество': 'quantity',
-                'фото (url ссылка)': 'image',
-                'фото': 'image',
-                'изображение': 'image',
-                'статус': 'status'
-            };
+            const updateExisting = document.getElementById('updateExisting').checked;
+            const createCategories = document.getElementById('createCategories').checked;
             
             jsonData.forEach((row, index) => {
                 try {
-                    // Нормализуем заголовки
-                    const normalizedRow = {};
-                    Object.keys(row).forEach(key => {
-                        const cleanKey = key.toLowerCase().trim();
-                        const mappedKey = headerMapping[cleanKey] || cleanKey;
-                        normalizedRow[mappedKey] = row[key];
-                    });
+                    // Определяем поля
+                    const id = row['ID'] || row['id'] || row['Код'] || Date.now() + index;
+                    const name = row['Название'] || row['Название товара'] || row['Name'] || '';
+                    const category = row['Категория'] || row['Category'] || '';
+                    const price = parseInt(row['Цена'] || row['Цена продажи'] || row['Price'] || '0');
+                    const description = row['Описание'] || row['Description'] || '';
+                    const image = row['Фото'] || row['Изображение'] || row['Image'] || '';
+                    const brand = row['Бренд'] || row['Brand'] || '';
+                    const quantity = parseInt(row['Количество'] || row['В наличии'] || row['Quantity'] || '10');
                     
-                    // Проверяем обязательные поля
-                    if (!normalizedRow.name || !normalizedRow.category) {
+                    if (!name || !category) {
                         errorCount++;
                         return;
                     }
                     
-                    // Обрабатываем ID
-                    let productId;
-                    if (normalizedRow.id) {
-                        // Пытаемся извлечь числовой ID
-                        const idStr = normalizedRow.id.toString();
-                        const match = idStr.match(/\d+/);
-                        productId = match ? parseInt(match[0]) * 1000 + index : Date.now() + index;
-                    } else {
-                        productId = Date.now() + index;
+                    // Добавляем категорию если нужно
+                    if (createCategories && category && !categories.some(c => c.name === category)) {
+                        newCategories.add(category);
                     }
                     
-                    // Обрабатываем цену
-                    let price = 0;
-                    if (normalizedRow.price) {
-                        price = parseInt(normalizedRow.price.toString().replace(/[^\d]/g, '')) || 0;
-                    }
-                    
-                    // Обрабатываем количество
-                    let quantity = 0;
-                    let status = 'out_of_stock';
-                    
-                    if (normalizedRow.quantity) {
-                        const qtyStr = normalizedRow.quantity.toString().toLowerCase();
-                        if (qtyStr === 'да' || qtyStr === 'yes' || qtyStr === 'true') {
-                            quantity = 10; // Значение по умолчанию
-                            status = 'in_stock';
-                        } else if (!isNaN(parseInt(qtyStr))) {
-                            quantity = parseInt(qtyStr);
-                            status = quantity > 0 ? 'in_stock' : 'out_of_stock';
-                        }
-                    }
-                    
-                    // Обрабатываем изображение
-                    let image = normalizedRow.image || '';
-                    if (!image || image.trim() === '') {
-                        image = 'https://via.placeholder.com/300x200/ecf0f1/7f8c8d?text=Нет+фото';
-                    }
-                    
-                    // Добавляем категорию в список
-                    newCategories.add(normalizedRow.category);
-                    
-                    // Создаем объект товара
                     const newProduct = {
-                        id: productId,
-                        name: normalizedRow.name.toString().trim(),
-                        category: normalizedRow.category.toString().trim(),
+                        id: parseInt(id) || Date.now() + index,
+                        name: name,
+                        category: category,
                         price: price,
                         oldPrice: null,
                         quantity: quantity,
-                        status: status,
-                        description: (normalizedRow.description || 'Описание товара').toString().trim(),
-                        image: image.toString().trim(),
-                        brand: normalizedRow.brand || ''
+                        status: quantity > 0 ? 'in_stock' : 'out_of_stock',
+                        description: description || 'Описание товара',
+                        image: image || 'https://via.placeholder.com/400x300/e2e8f0/64748b?text=Нет+фото',
+                        brand: brand,
+                        tags: []
                     };
                     
-                    // Проверяем, существует ли уже такой товар (по имени и категории)
+                    // Проверяем существующий товар
                     const existingIndex = products.findIndex(p => 
                         p.name.toLowerCase() === newProduct.name.toLowerCase() && 
                         p.category.toLowerCase() === newProduct.category.toLowerCase()
                     );
                     
-                    if (existingIndex !== -1) {
-                        // Обновляем существующий товар
+                    if (existingIndex !== -1 && updateExisting) {
                         products[existingIndex] = {
                             ...products[existingIndex],
                             ...newProduct,
@@ -1758,43 +2589,47 @@ BH-001,Бытовая химия,FAIRY banane - 5 литров,FAIRY,"Описа
                         };
                         updatedCount++;
                     } else {
-                        // Добавляем новый товар
                         products.push(newProduct);
                         importedCount++;
                     }
                     
                 } catch (error) {
-                    console.error('Ошибка обработки строки:', error);
                     errorCount++;
                 }
             });
             
             // Добавляем новые категории
-            newCategories.forEach(categoryName => {
-                if (!categories.some(c => c.name === categoryName)) {
-                    categories.push({
-                        id: categories.length > 0 ? Math.max(...categories.map(c => c.id)) + 1 : 1,
-                        name: categoryName,
-                        icon: '📦',
-                        description: `Товары категории ${categoryName}`
-                    });
-                }
-            });
+            if (createCategories) {
+                newCategories.forEach(categoryName => {
+                    if (!categories.some(c => c.name === categoryName)) {
+                        categories.push({
+                            id: categories.length > 0 ? Math.max(...categories.map(c => c.id)) + 1 : 1,
+                            name: categoryName,
+                            icon: '📦',
+                            description: `Товары категории ${categoryName}`
+                        });
+                    }
+                });
+                
+                saveData('categories', categories);
+                loadCategories();
+            }
             
-            // Сохраняем данные
+            // Сохраняем товары
             saveData('products', products);
-            saveData('categories', categories);
             
             // Обновляем интерфейс
             filteredProducts = [...products];
             loadProducts();
-            loadCategories();
             updateCategoryFilter();
+            updateStats();
+            loadAdminProducts();
             
             // Показываем результаты
             showImportResults(importedCount, updatedCount, errorCount, newCategories.size);
             
             showNotification(`✅ Импорт завершен! Добавлено: ${importedCount}, Обновлено: ${updatedCount}`, 'success');
+            closeModal('importModal');
         }
 
         function showImportResults(imported, updated, errors, newCategories) {
@@ -1802,702 +2637,26 @@ BH-001,Бытовая химия,FAIRY banane - 5 литров,FAIRY,"Описа
             resultsDiv.style.display = 'block';
             
             resultsDiv.innerHTML = `
-                <div style="background: var(--light); border-radius: var(--radius); padding: 20px; margin-top: 20px;">
-                    <h4 style="margin-bottom: 15px; color: var(--dark);">📊 Результаты импорта</h4>
-                    
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
-                        <div style="text-align: center; padding: 15px; background: white; border-radius: var(--radius);">
-                            <div style="font-size: 2rem; font-weight: bold; color: var(--success);">${imported}</div>
-                            <div>Новых товаров</div>
-                        </div>
-                        <div style="text-align: center; padding: 15px; background: white; border-radius: var(--radius);">
-                            <div style="font-size: 2rem; font-weight: bold; color: var(--primary);">${updated}</div>
-                            <div>Обновлено</div>
-                        </div>
-                        <div style="text-align: center; padding: 15px; background: white; border-radius: var(--radius);">
-                            <div style="font-size: 2rem; font-weight: bold; color: var(--accent);">${newCategories}</div>
-                            <div>Новых категорий</div>
-                        </div>
-                        <div style="text-align: center; padding: 15px; background: white; border-radius: var(--radius);">
-                            <div style="font-size: 2rem; font-weight: bold; color: var(--danger);">${errors}</div>
-                            <div>Ошибок</div>
-                        </div>
+                <h4 style="margin-bottom: 15px;">📊 Результаты импорта</h4>
+                <div class="results-grid">
+                    <div class="result-card result-added">
+                        <div class="result-value">${imported}</div>
+                        <div class="result-label">Добавлено</div>
                     </div>
-                    
-                    <div style="background: white; border-radius: var(--radius); padding: 15px;">
-                        <p><strong>Всего товаров в базе:</strong> ${products.length}</p>
-                        <p><strong>Всего категорий:</strong> ${categories.length}</p>
-                        <p style="margin-top: 10px; color: var(--gray); font-size: 0.9rem;">
-                            <i class="fas fa-info-circle"></i> Товары успешно добавлены на сайт и доступны для покупки.
-                        </p>
+                    <div class="result-card result-updated">
+                        <div class="result-value">${updated}</div>
+                        <div class="result-label">Обновлено</div>
+                    </div>
+                    <div class="result-card result-errors">
+                        <div class="result-value">${errors}</div>
+                        <div class="result-label">Ошибок</div>
+                    </div>
+                    <div class="result-card result-categories">
+                        <div class="result-value">${newCategories}</div>
+                        <div class="result-label">Категорий</div>
                     </div>
                 </div>
             `;
-            
-            // Прокручиваем к результатам
-            resultsDiv.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        // ==================== АДМИНИСТРАТИВНЫЙ КОНСТРУКТОР ====================
-        function toggleConstructor() {
-            const toolbar = document.getElementById('constructorToolbar');
-            const editButtons = document.getElementById('editButtons');
-            
-            if (toolbar.classList.contains('expanded')) {
-                toolbar.classList.remove('expanded');
-                editButtons.style.display = 'none';
-            } else {
-                toolbar.classList.add('expanded');
-                editButtons.style.display = 'flex';
-            }
-        }
-
-        function editBackground() {
-            openEditPanel('background', '🎨 Редактирование фона', `
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Тип фона:</label>
-                    <select id="bgType" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);">
-                        <option value="gradient" ${siteSettings.background === 'gradient' ? 'selected' : ''}>Градиент</option>
-                        <option value="solid" ${siteSettings.background === 'solid' ? 'selected' : ''}>Сплошной цвет</option>
-                    </select>
-                </div>
-                
-                <div id="gradientSettings" style="${siteSettings.background !== 'gradient' ? 'display: none;' : ''}">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-                        <div>
-                            <label style="display: block; margin-bottom: 8px;">Цвет 1:</label>
-                            <input type="color" id="color1" value="${siteSettings.primaryColor || '#2c5aa0'}" style="width: 100%; height: 40px;">
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 8px;">Цвет 2:</label>
-                            <input type="color" id="color2" value="${siteSettings.secondaryColor || '#1a3a6b'}" style="width: 100%; height: 40px;">
-                        </div>
-                    </div>
-                </div>
-                
-                <div id="solidSettings" style="${siteSettings.background !== 'solid' ? 'display: none;' : ''}">
-                    <div style="margin-bottom: 15px;">
-                        <label style="display: block; margin-bottom: 8px;">Цвет фона:</label>
-                        <input type="color" id="solidColor" value="${siteSettings.solidColor || '#2c5aa0'}" style="width: 100%; height: 40px;">
-                    </div>
-                </div>
-                
-                <script>
-                    document.getElementById('bgType').addEventListener('change', function() {
-                        document.getElementById('gradientSettings').style.display = this.value === 'gradient' ? 'block' : 'none';
-                        document.getElementById('solidSettings').style.display = this.value === 'solid' ? 'block' : 'none';
-                    });
-                </script>
-            `);
-        }
-
-        function editHeader() {
-            openEditPanel('header', '📝 Редактирование шапки', `
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Заголовок сайта:</label>
-                    <input type="text" id="siteTitle" value="${siteSettings.heroTitle || 'D13 - Всё для дома и ремонта'}" 
-                           style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);">
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Описание сайта:</label>
-                    <textarea id="siteDescription" rows="3" 
-                              style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);">${siteSettings.heroText || 'Товары для дома, хозтовары и профессиональный ремонт техники'}</textarea>
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Телефон:</label>
-                    <input type="text" id="sitePhone" value="+7 (923) 753-36-06" 
-                           style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);">
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Email:</label>
-                    <input type="email" id="siteEmail" value="prodtorg.barnaul@gmail.com" 
-                           style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);">
-                </div>
-            `);
-        }
-
-        function editCategories() {
-            openEditPanel('categories', '📂 Управление категориями', `
-                <div style="margin-bottom: 20px;">
-                    <button onclick="showAddCategoryForm()" class="btn btn-primary" style="width: 100%;">
-                        <i class="fas fa-plus"></i> Добавить категорию
-                    </button>
-                </div>
-                
-                <div style="max-height: 400px; overflow-y: auto; padding-right: 10px;">
-                    ${categories.map((category, index) => `
-                        <div style="background: var(--light); border-radius: var(--radius); padding: 15px; margin-bottom: 10px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <span style="font-size: 1.5rem;">${category.icon}</span>
-                                    <div>
-                                        <div style="font-weight: bold;">${category.name}</div>
-                                        <div style="font-size: 0.9rem; color: var(--gray);">${category.description}</div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <button onclick="editCategory(${index})" class="btn btn-sm btn-outline" style="margin-right: 5px;">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button onclick="deleteCategory(${index})" class="btn btn-sm btn-danger">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            `);
-        }
-
-        function manageProducts() {
-            openEditPanel('products', '🛍️ Управление товарами', `
-                <div style="margin-bottom: 20px;">
-                    <div style="display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-bottom: 15px;">
-                        <input type="text" id="productSearch" placeholder="Поиск товаров..." 
-                               style="padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);"
-                               onkeyup="searchProductsInEditor()">
-                        <button onclick="showAddProductForm()" class="btn btn-primary">
-                            <i class="fas fa-plus"></i> Добавить
-                        </button>
-                    </div>
-                </div>
-                
-                <div style="max-height: 400px; overflow-y: auto; padding-right: 10px;" id="productsList">
-                    <!-- Список товаров будет загружен динамически -->
-                </div>
-                
-                <script>
-                    loadProductsForEditor();
-                </script>
-            `);
-        }
-
-        function manageOrders() {
-            openEditPanel('orders', '📋 Управление заказами', `
-                <div style="max-height: 400px; overflow-y: auto; padding-right: 10px;">
-                    ${orders.length === 0 ? `
-                        <div style="text-align: center; padding: 40px; color: var(--gray);">
-                            <i class="fas fa-clipboard-list" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
-                            <p>Заказов нет</p>
-                        </div>
-                    ` : orders.map(order => `
-                        <div style="background: var(--light); border-radius: var(--radius); padding: 15px; margin-bottom: 10px;">
-                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
-                                <div>
-                                    <div style="font-weight: bold;">Заказ #${order.id}</div>
-                                    <div style="font-size: 0.9rem; color: var(--gray);">
-                                        ${new Date(order.date).toLocaleDateString('ru-RU')} • ${order.customer}
-                                    </div>
-                                </div>
-                                <span style="background: ${order.status === 'completed' ? 'var(--accent)' : order.status === 'pending' ? 'var(--warning)' : 'var(--gray)'}; 
-                                      color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.8rem;">
-                                    ${order.status === 'completed' ? 'Выполнен' : order.status === 'pending' ? 'В обработке' : 'Отменен'}
-                                </span>
-                            </div>
-                            <div style="font-size: 0.9rem;">
-                                <div><strong>Товары:</strong> ${order.items.length} шт.</div>
-                                <div><strong>Сумма:</strong> ${order.total.toLocaleString()} ₽</div>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            `);
-        }
-
-        function openEditPanel(type, title, content) {
-            document.getElementById('editOverlay').style.display = 'block';
-            document.getElementById('editPanel').style.display = 'block';
-            
-            document.getElementById('editPanelContent').innerHTML = `
-                <h3 style="margin-bottom: 20px;">${title}</h3>
-                <div id="editContent">
-                    ${content}
-                </div>
-            `;
-            
-            // Сохраняем тип редактирования
-            document.getElementById('editPanel').dataset.editType = type;
-        }
-
-        function applyChanges() {
-            const type = document.getElementById('editPanel').dataset.editType;
-            
-            switch(type) {
-                case 'background':
-                    applyBackgroundChanges();
-                    break;
-                case 'header':
-                    applyHeaderChanges();
-                    break;
-                case 'categories':
-                    // Изменения применяются непосредственно
-                    break;
-                case 'products':
-                    // Изменения применяются непосредственно
-                    break;
-            }
-            
-            closePanel();
-        }
-
-        function applyBackgroundChanges() {
-            const bgType = document.querySelector('#bgType')?.value || 'gradient';
-            
-            if (bgType === 'gradient') {
-                const color1 = document.querySelector('#color1')?.value || '#2c5aa0';
-                const color2 = document.querySelector('#color2')?.value || '#1a3a6b';
-                
-                siteSettings.background = 'gradient';
-                siteSettings.primaryColor = color1;
-                siteSettings.secondaryColor = color2;
-                
-                document.querySelector('.hero').style.background = 
-                    `linear-gradient(135deg, ${color1}, ${color2})`;
-            } else {
-                const solidColor = document.querySelector('#solidColor')?.value || '#2c5aa0';
-                
-                siteSettings.background = 'solid';
-                siteSettings.solidColor = solidColor;
-                
-                document.querySelector('.hero').style.background = solidColor;
-            }
-            
-            saveData('siteSettings', siteSettings);
-            showNotification('Фон обновлен', 'success');
-        }
-
-        function applyHeaderChanges() {
-            const title = document.querySelector('#siteTitle')?.value;
-            const description = document.querySelector('#siteDescription')?.value;
-            const phone = document.querySelector('#sitePhone')?.value;
-            const email = document.querySelector('#siteEmail')?.value;
-            
-            if (title) {
-                siteSettings.heroTitle = title;
-                document.getElementById('heroTitle').textContent = title;
-            }
-            
-            if (description) {
-                siteSettings.heroText = description;
-                document.getElementById('heroText').textContent = description;
-            }
-            
-            if (phone || email) {
-                const contacts = document.querySelector('.header-contacts');
-                if (contacts) {
-                    contacts.innerHTML = `
-                        <i class="fas fa-phone"></i> ${phone || '+7 (923) 753-36-06'}
-                        <span style="margin: 0 15px">|</span>
-                        <i class="fas fa-envelope"></i> ${email || 'prodtorg.barnaul@gmail.com'}
-                    `;
-                }
-            }
-            
-            saveData('siteSettings', siteSettings);
-            showNotification('Шапка обновлена', 'success');
-        }
-
-        function showAddCategoryForm() {
-            document.getElementById('editContent').innerHTML = `
-                <h4 style="margin-bottom: 20px;">➕ Добавить категорию</h4>
-                
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Название:</label>
-                    <input type="text" id="newCatName" placeholder="Введите название категории"
-                           style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);">
-                </div>
-                
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Иконка (эмодзи):</label>
-                    <input type="text" id="newCatIcon" placeholder="📦"
-                           style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);" value="📦">
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Описание:</label>
-                    <textarea id="newCatDesc" rows="3" placeholder="Введите описание категории"
-                              style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);"></textarea>
-                </div>
-                
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="saveNewCategory()" class="btn btn-success" style="flex: 1;">
-                        <i class="fas fa-save"></i> Сохранить
-                    </button>
-                    <button onclick="editCategories()" class="btn btn-outline">
-                        <i class="fas fa-arrow-left"></i> Назад
-                    </button>
-                </div>
-            `;
-        }
-
-        function saveNewCategory() {
-            const name = document.querySelector('#newCatName')?.value;
-            const icon = document.querySelector('#newCatIcon')?.value;
-            const description = document.querySelector('#newCatDesc')?.value;
-            
-            if (!name || !icon) {
-                showNotification('Заполните обязательные поля', 'error');
-                return;
-            }
-            
-            const newCategory = {
-                id: categories.length > 0 ? Math.max(...categories.map(c => c.id)) + 1 : 1,
-                name: name,
-                icon: icon,
-                description: description || `Товары категории ${name}`
-            };
-            
-            categories.push(newCategory);
-            saveData('categories', categories);
-            loadCategories();
-            updateCategoryFilter();
-            editCategories();
-            showNotification('Категория добавлена', 'success');
-        }
-
-        function editCategory(index) {
-            const category = categories[index];
-            
-            document.getElementById('editContent').innerHTML = `
-                <h4 style="margin-bottom: 20px;">✏️ Редактирование категории</h4>
-                
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Название:</label>
-                    <input type="text" id="editCatName" value="${category.name}"
-                           style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);">
-                </div>
-                
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Иконка (эмодзи):</label>
-                    <input type="text" id="editCatIcon" value="${category.icon}"
-                           style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);">
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Описание:</label>
-                    <textarea id="editCatDesc" rows="3"
-                              style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);">${category.description}</textarea>
-                </div>
-                
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="saveCategoryChanges(${index})" class="btn btn-success" style="flex: 1;">
-                        <i class="fas fa-save"></i> Сохранить
-                    </button>
-                    <button onclick="editCategories()" class="btn btn-outline">
-                        <i class="fas fa-arrow-left"></i> Назад
-                    </button>
-                </div>
-            `;
-        }
-
-        function saveCategoryChanges(index) {
-            const name = document.querySelector('#editCatName')?.value;
-            const icon = document.querySelector('#editCatIcon')?.value;
-            const description = document.querySelector('#editCatDesc')?.value;
-            
-            if (!name || !icon) {
-                showNotification('Заполните обязательные поля', 'error');
-                return;
-            }
-            
-            categories[index] = {
-                ...categories[index],
-                name: name,
-                icon: icon,
-                description: description
-            };
-            
-            // Обновляем товары в этой категории
-            products.forEach(product => {
-                if (product.category === categories[index].name) {
-                    product.category = name;
-                }
-            });
-            
-            saveData('categories', categories);
-            saveData('products', products);
-            loadCategories();
-            loadProducts();
-            updateCategoryFilter();
-            editCategories();
-            showNotification('Категория обновлена', 'success');
-        }
-
-        function deleteCategory(index) {
-            if (!confirm('Удалить категорию? Товары в этой категории останутся без категории.')) {
-                return;
-            }
-            
-            const categoryName = categories[index].name;
-            
-            // Удаляем категорию
-            categories.splice(index, 1);
-            
-            // Обновляем товары
-            products.forEach(product => {
-                if (product.category === categoryName) {
-                    product.category = 'Без категории';
-                }
-            });
-            
-            saveData('categories', categories);
-            saveData('products', products);
-            loadCategories();
-            loadProducts();
-            updateCategoryFilter();
-            editCategories();
-            showNotification('Категория удалена', 'info');
-        }
-
-        function loadProductsForEditor() {
-            const productsList = document.getElementById('productsList');
-            
-            if (products.length === 0) {
-                productsList.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: var(--gray);">
-                        <i class="fas fa-box-open" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
-                        <p>Товаров нет</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            productsList.innerHTML = products.map((product, index) => `
-                <div class="product-editor-item" style="background: var(--light); border-radius: var(--radius); padding: 15px; margin-bottom: 10px;">
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
-                        <div style="display: flex; align-items: start; gap: 15px; flex: 1;">
-                            <img src="${product.image}" alt="${product.name}" 
-                                 style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;"
-                                 onerror="this.src='https://via.placeholder.com/60x60/ecf0f1/7f8c8d?text=Нет'">
-                            <div style="flex: 1;">
-                                <div style="font-weight: bold; margin-bottom: 5px;">${product.name}</div>
-                                <div style="font-size: 0.9rem; color: var(--gray); margin-bottom: 5px;">${product.category}</div>
-                                <div style="font-size: 0.9rem;"><strong>Цена:</strong> ${product.price} ₽ • <strong>Наличие:</strong> ${product.quantity} шт.</div>
-                            </div>
-                        </div>
-                        <div>
-                            <button onclick="editProductInEditor(${index})" class="btn btn-sm btn-outline" style="margin-right: 5px;">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button onclick="deleteProductFromEditor(${index})" class="btn btn-sm btn-danger">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function searchProductsInEditor() {
-            const searchTerm = document.getElementById('productSearch').value.toLowerCase();
-            const items = document.querySelectorAll('.product-editor-item');
-            
-            items.forEach(item => {
-                const text = item.textContent.toLowerCase();
-                item.style.display = text.includes(searchTerm) ? 'block' : 'none';
-            });
-        }
-
-        function showAddProductForm() {
-            document.getElementById('editContent').innerHTML = `
-                <h4 style="margin-bottom: 20px;">➕ Добавить товар</h4>
-                
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Название:</label>
-                    <input type="text" id="newProdName" placeholder="Введите название товара"
-                           style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);">
-                </div>
-                
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Категория:</label>
-                    <select id="newProdCategory" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);">
-                        <option value="">Выберите категорию</option>
-                        ${categories.map(cat => `<option value="${cat.name}">${cat.name}</option>`).join('')}
-                    </select>
-                </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-                    <div>
-                        <label style="display: block; margin-bottom: 8px; font-weight: bold;">Цена:</label>
-                        <input type="number" id="newProdPrice" placeholder="Цена в рублях"
-                               style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);">
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 8px; font-weight: bold;">Количество:</label>
-                        <input type="number" id="newProdQuantity" placeholder="Количество на складе" value="10"
-                               style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);">
-                    </div>
-                </div>
-                
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Изображение (URL):</label>
-                    <input type="text" id="newProdImage" placeholder="https://example.com/photo.jpg"
-                           style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);">
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Описание:</label>
-                    <textarea id="newProdDesc" rows="3" placeholder="Введите описание товара"
-                              style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);"></textarea>
-                </div>
-                
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="saveNewProductInEditor()" class="btn btn-success" style="flex: 1;">
-                        <i class="fas fa-save"></i> Сохранить
-                    </button>
-                    <button onclick="manageProducts()" class="btn btn-outline">
-                        <i class="fas fa-arrow-left"></i> Назад
-                    </button>
-                </div>
-            `;
-        }
-
-        function saveNewProductInEditor() {
-            const name = document.querySelector('#newProdName')?.value;
-            const category = document.querySelector('#newProdCategory')?.value;
-            const price = parseInt(document.querySelector('#newProdPrice')?.value) || 0;
-            const quantity = parseInt(document.querySelector('#newProdQuantity')?.value) || 0;
-            const image = document.querySelector('#newProdImage')?.value;
-            const description = document.querySelector('#newProdDesc')?.value;
-            
-            if (!name || !category || price <= 0) {
-                showNotification('Заполните обязательные поля (название, категория, цена)', 'error');
-                return;
-            }
-            
-            const newProduct = {
-                id: Date.now(),
-                name: name,
-                category: category,
-                price: price,
-                oldPrice: null,
-                quantity: quantity,
-                status: quantity > 0 ? 'in_stock' : 'out_of_stock',
-                description: description || 'Описание товара',
-                image: image || 'https://via.placeholder.com/300x200/ecf0f1/7f8c8d?text=Нет+фото',
-                brand: ''
-            };
-            
-            products.push(newProduct);
-            saveData('products', products);
-            filteredProducts = [...products];
-            loadProducts();
-            updateCategoryFilter();
-            manageProducts();
-            showNotification('Товар добавлен', 'success');
-        }
-
-        function editProductInEditor(index) {
-            const product = products[index];
-            
-            document.getElementById('editContent').innerHTML = `
-                <h4 style="margin-bottom: 20px;">✏️ Редактирование товара</h4>
-                
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Название:</label>
-                    <input type="text" id="editProdName" value="${product.name}"
-                           style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);">
-                </div>
-                
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Категория:</label>
-                    <select id="editProdCategory" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);">
-                        <option value="">Выберите категорию</option>
-                        ${categories.map(cat => `<option value="${cat.name}" ${cat.name === product.category ? 'selected' : ''}>${cat.name}</option>`).join('')}
-                    </select>
-                </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-                    <div>
-                        <label style="display: block; margin-bottom: 8px; font-weight: bold;">Цена:</label>
-                        <input type="number" id="editProdPrice" value="${product.price}"
-                               style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);">
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 8px; font-weight: bold;">Количество:</label>
-                        <input type="number" id="editProdQuantity" value="${product.quantity}"
-                               style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);">
-                    </div>
-                </div>
-                
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Изображение (URL):</label>
-                    <input type="text" id="editProdImage" value="${product.image}"
-                           style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);">
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Описание:</label>
-                    <textarea id="editProdDesc" rows="3"
-                              style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);">${product.description}</textarea>
-                </div>
-                
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="saveProductChanges(${index})" class="btn btn-success" style="flex: 1;">
-                        <i class="fas fa-save"></i> Сохранить
-                    </button>
-                    <button onclick="manageProducts()" class="btn btn-outline">
-                        <i class="fas fa-arrow-left"></i> Назад
-                    </button>
-                </div>
-            `;
-        }
-
-        function saveProductChanges(index) {
-            const name = document.querySelector('#editProdName')?.value;
-            const category = document.querySelector('#editProdCategory')?.value;
-            const price = parseInt(document.querySelector('#editProdPrice')?.value) || 0;
-            const quantity = parseInt(document.querySelector('#editProdQuantity')?.value) || 0;
-            const image = document.querySelector('#editProdImage')?.value;
-            const description = document.querySelector('#editProdDesc')?.value;
-            
-            if (!name || !category || price <= 0) {
-                showNotification('Заполните обязательные поля (название, категория, цена)', 'error');
-                return;
-            }
-            
-            products[index] = {
-                ...products[index],
-                name: name,
-                category: category,
-                price: price,
-                quantity: quantity,
-                status: quantity > 0 ? 'in_stock' : 'out_of_stock',
-                description: description,
-                image: image
-            };
-            
-            saveData('products', products);
-            filteredProducts = [...products];
-            loadProducts();
-            updateCategoryFilter();
-            manageProducts();
-            showNotification('Товар обновлен', 'success');
-        }
-
-        function deleteProductFromEditor(index) {
-            if (!confirm('Удалить товар?')) return;
-            
-            products.splice(index, 1);
-            saveData('products', products);
-            filteredProducts = [...products];
-            loadProducts();
-            updateCategoryFilter();
-            manageProducts();
-            showNotification('Товар удален', 'info');
-        }
-
-        function closePanel() {
-            document.getElementById('editOverlay').style.display = 'none';
-            document.getElementById('editPanel').style.display = 'none';
-        }
-
-        function saveDesign() {
-            showNotification('💾 Все настройки сохранены!', 'success');
         }
 
         // ==================== УТИЛИТЫ ====================
@@ -2506,221 +2665,179 @@ BH-001,Бытовая химия,FAIRY banane - 5 литров,FAIRY,"Описа
         }
 
         function showNotification(message, type = 'success') {
-            // Создаем элемент уведомления
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 100px;
-                right: 20px;
-                background: ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--primary)'};
-                color: white;
-                padding: 15px 25px;
-                border-radius: var(--radius);
-                box-shadow: var(--shadow);
-                z-index: 10000;
-                animation: slideIn 0.3s ease;
-                max-width: 400px;
-            `;
-            notification.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
-                    <span>${message}</span>
-                </div>
-            `;
+            const notification = document.getElementById('notification');
+            const title = document.getElementById('notificationTitle');
+            const messageEl = document.getElementById('notificationMessage');
             
-            document.body.appendChild(notification);
+            // Устанавливаем тип
+            notification.className = `notification ${type}`;
             
-            // Удаляем уведомление через 3 секунды
+            // Устанавливаем заголовок в зависимости от типа
+            const titles = {
+                'success': 'Успешно!',
+                'error': 'Ошибка!',
+                'info': 'Информация',
+                'warning': 'Внимание!'
+            };
+            
+            title.textContent = titles[type] || 'Уведомление';
+            messageEl.textContent = message;
+            
+            // Показываем уведомление
+            notification.classList.add('show');
+            
+            // Автоматически скрываем через 4 секунды
             setTimeout(() => {
-                notification.style.animation = 'slideOut 0.3s ease';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
-                    }
-                }, 300);
-            }, 3000);
-            
-            // Добавляем CSS анимации
-            if (!document.querySelector('#notification-styles')) {
-                const style = document.createElement('style');
-                style.id = 'notification-styles';
-                style.textContent = `
-                    @keyframes slideIn {
-                        from { transform: translateX(100%); opacity: 0; }
-                        to { transform: translateX(0); opacity: 1; }
-                    }
-                    @keyframes slideOut {
-                        from { transform: translateX(0); opacity: 1; }
-                        to { transform: translateX(100%); opacity: 0; }
-                    }
-                `;
-                document.head.appendChild(style);
-            }
+                hideNotification();
+            }, 4000);
+        }
+
+        function hideNotification() {
+            document.getElementById('notification').classList.remove('show');
+        }
+
+        function scrollToProducts() {
+            document.getElementById('productsSection').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
         }
 
         function openProfile() {
-            showNotification('👤 Профиль пользователя', 'info');
+            showNotification('Профиль пользователя', 'info');
         }
 
-        function logout() {
-            if (confirm('Выйти из системы?')) {
-                showNotification('👋 До свидания!', 'info');
-                // В реальном приложении здесь была бы очистка сессии
-            }
+        function darkenColor(color, percent) {
+            // Простая функция для затемнения цвета
+            const num = parseInt(color.replace("#", ""), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) - amt;
+            const G = (num >> 8 & 0x00FF) - amt;
+            const B = (num & 0x0000FF) - amt;
+            return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+                (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+                (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
         }
 
-        function showProductDetails(productId) {
-            const product = products.find(p => p.id === productId);
-            if (!product) return;
-            
-            const discount = product.oldPrice ? 
-                Math.round((1 - product.price / product.oldPrice) * 100) : 0;
-            
-            const detailsHTML = `
-                <div style="max-width: 600px; margin: 0 auto;">
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <img src="${product.image}" alt="${product.name}" 
-                             style="max-width: 100%; max-height: 300px; border-radius: var(--radius);"
-                             onerror="this.src='https://via.placeholder.com/400x300/ecf0f1/7f8c8d?text=Нет+фото'">
-                    </div>
-                    
-                    <h2 style="margin-bottom: 15px;">${product.name}</h2>
-                    
-                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-                        <span style="font-size: 1.8rem; font-weight: bold; color: var(--primary);">
-                            ${product.price.toLocaleString()} ₽
-                        </span>
-                        ${product.oldPrice ? `
-                            <span style="font-size: 1.2rem; color: var(--gray); text-decoration: line-through;">
-                                ${product.oldPrice.toLocaleString()} ₽
-                            </span>
-                            <span style="background: var(--accent); color: white; padding: 5px 10px; border-radius: 15px; font-weight: bold;">
-                                -${discount}%
-                            </span>
-                        ` : ''}
-                    </div>
-                    
-                    <div style="background: var(--light); border-radius: var(--radius); padding: 15px; margin-bottom: 20px;">
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
-                            <div>
-                                <div style="font-size: 0.9rem; color: var(--gray);">Категория</div>
-                                <div style="font-weight: bold;">${product.category}</div>
-                            </div>
-                            <div>
-                                <div style="font-size: 0.9rem; color: var(--gray);">Наличие</div>
-                                <div style="font-weight: bold; color: ${product.status === 'in_stock' && product.quantity > 0 ? 'var(--success)' : 'var(--danger)'}">
-                                    ${product.status === 'in_stock' && product.quantity > 0 ? 'В наличии' : 'Нет в наличии'}
-                                    ${product.quantity > 0 ? ` (${product.quantity} шт.)` : ''}
-                                </div>
-                            </div>
-                            ${product.brand ? `
-                                <div>
-                                    <div style="font-size: 0.9rem; color: var(--gray);">Бренд</div>
-                                    <div style="font-weight: bold;">${product.brand}</div>
-                                </div>
-                            ` : ''}
-                        </div>
-                    </div>
-                    
-                    <div style="margin-bottom: 25px;">
-                        <h3 style="margin-bottom: 10px;">Описание</h3>
-                        <p style="line-height: 1.6;">${product.description}</p>
-                    </div>
-                    
-                    <button onclick="addToCart(${product.id}); closeModal('productDetailsModal');" 
-                            class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 1.1rem;"
-                            ${product.status !== 'in_stock' || product.quantity <= 0 ? 'disabled' : ''}>
-                        <i class="fas fa-shopping-cart"></i>
-                        ${product.status === 'in_stock' && product.quantity > 0 ? 'Добавить в корзину' : 'Товар недоступен'}
-                    </button>
-                </div>
-            `;
-            
-            // Создаем модальное окно для деталей товара
-            const modal = document.createElement('div');
-            modal.id = 'productDetailsModal';
-            modal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0,0,0,0.5);
-                z-index: 10000;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 20px;
-            `;
-            
-            modal.innerHTML = `
-                <div style="background: white; border-radius: var(--radius); padding: 30px; max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative;">
-                    <button onclick="closeModal('productDetailsModal')" 
-                            style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--gray);">
-                        &times;
-                    </button>
-                    ${detailsHTML}
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
+        function lightenColor(color, percent) {
+            // Простая функция для осветления цвета
+            const num = parseInt(color.replace("#", ""), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) + amt;
+            const G = (num >> 8 & 0x00FF) + amt;
+            const B = (num & 0x0000FF) + amt;
+            return "#" + (0x1000000 + (R > 255 ? 255 : R > 1 ? R : 1) * 0x10000 +
+                (G > 255 ? 255 : G > 1 ? G : 1) * 0x100 +
+                (B > 255 ? 255 : B > 1 ? B : 1)).toString(16).slice(1);
         }
 
-        // Глобальные функции для модальных окон
-        window.closeModal = function(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.style.animation = 'fadeOut 0.3s ease';
-                setTimeout(() => {
-                    if (modal.parentNode) {
-                        modal.parentNode.removeChild(modal);
+        function initChart() {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            
+            // Данные за последние 7 дней
+            const labels = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+            const data = [12000, 19000, 15000, 25000, 22000, 30000, 28000];
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Выручка (₽)',
+                        data: data,
+                        borderColor: 'var(--primary)',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString() + '₽';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
                     }
-                }, 300);
-            }
-        };
-
-        // Добавляем CSS анимацию для закрытия модальных окон
-        if (!document.querySelector('#modal-styles')) {
-            const style = document.createElement('style');
-            style.id = 'modal-styles';
-            style.textContent = `
-                @keyframes fadeOut {
-                    from { opacity: 1; }
-                    to { opacity: 0; }
                 }
-            `;
-            document.head.appendChild(style);
+            });
+        }
+
+        function exportProducts() {
+            // Создаем CSV строку
+            const headers = ['ID', 'Категория', 'Название', 'Бренд', 'Цена', 'Количество', 'Описание', 'Фото'];
+            const csvRows = [headers.join(',')];
+            
+            products.forEach(product => {
+                const row = [
+                    product.id,
+                    `"${product.category}"`,
+                    `"${product.name}"`,
+                    `"${product.brand || ''}"`,
+                    product.price,
+                    product.quantity,
+                    `"${product.description.replace(/"/g, '""')}"`,
+                    `"${product.image}"`
+                ];
+                csvRows.push(row.join(','));
+            });
+            
+            const csvString = csvRows.join('\n');
+            
+            // Создаем Blob и скачиваем
+            const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'products_export.csv');
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showNotification('Товары экспортированы в CSV файл', 'success');
         }
 
         // Делаем функции глобальными
-        window.toggleConstructor = toggleConstructor;
-        window.editBackground = editBackground;
-        window.editHeader = editHeader;
-        window.editCategories = editCategories;
-        window.manageProducts = manageProducts;
-        window.manageOrders = manageOrders;
-        window.showImportPanel = showImportPanel;
-        window.closePanel = closePanel;
-        window.applyChanges = applyChanges;
-        window.saveDesign = saveDesign;
-        window.logout = logout;
-        window.openCart = openCart;
+        window.toggleAdminPanel = toggleAdminPanel;
+        window.switchTab = switchTab;
+        window.applyPreset = applyPreset;
+        window.showImportModal = showImportModal;
         window.closeModal = closeModal;
+        window.showAddProductModal = showAddProductModal;
+        window.handleFileSelect = handleFileSelect;
+        window.importFromText = importFromText;
         window.addToCart = addToCart;
-        window.updateCartQuantity = updateCartQuantity;
-        window.removeFromCart = removeFromCart;
-        window.checkout = checkout;
+        window.openCart = openCart;
         window.openProfile = openProfile;
         window.filterByCategory = filterByCategory;
         window.filterProducts = filterProducts;
-        window.searchProducts = searchProducts;
         window.sortProducts = sortProducts;
+        window.searchProducts = searchProducts;
         window.scrollToProducts = scrollToProducts;
-        window.showProductDetails = showProductDetails;
-        window.handleFileSelect = handleFileSelect;
-        window.handleDragOver = handleDragOver;
-        window.handleDrop = handleDrop;
-        window.importFromText = importFromText;
+        window.loadMoreProducts = loadMoreProducts;
+        window.resetFilters = resetFilters;
+        window.hideNotification = hideNotification;
     </script>
 </body>
 </html>
