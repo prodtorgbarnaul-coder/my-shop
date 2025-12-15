@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Магазин "Для своих" - Главная</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        /* ОСНОВНЫЕ СТИЛИ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2c5aa0;
+            --secondary: #e74c3c;
+            --accent: #27ae60;
+            --light: #f8f9fa;
+            --dark: #2c3e50;
+            --gray: #6c757d;
+            --border: #e9ecef;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* КОНТЕЙНЕРЫ */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* ШАПКА */
+        header {
+            background: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-top {
+            background: linear-gradient(135deg, var(--primary), #1a3a6b);
+            color: white;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .header-main {
+            padding: 15px 0;
+        }
+
+        .header-main .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--primary);
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary), #1a3a6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .search-bar {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid var(--border);
+            border-radius: 30px;
+            font-size: 14px;
+        }
+
+        .search-bar button {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, var(--primary), #1a3a6b);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-action {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--dark);
+            font-size: 12px;
+        }
+
+        .header-action i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .cart-count {
+            background: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            color: white;
+            padding: 100px 0 60px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* КАТЕГОРИИ */
+        .categories-section {
+            padding: 60px 0;
+            background: white;
+            border-radius: 20px;
+            margin: 0 15px 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 40px;
+            color: var(--dark);
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .category-card {
+            background: linear-gradient(135deg, var(--primary), #1a3a6b);
+            border-radius: 15px;
+            padding: 30px 20px;
+            text-align: center;
+            color: white;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .category-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        /* ТОВАРЫ */
+        .products-section {
+            padding: 60px 0;
+            background: white;
+            border-radius: 20px;
+            margin: 0 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            color: var(--primary);
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .add-to-cart {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--primary), #1a3a6b);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* КОНСТРУКТОР */
+        .constructor-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), #1a3a6b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+
+        .constructor-menu {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+        }
+
+        .constructor-menu.show {
+            display: block;
+        }
+
+        .constructor-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .constructor-btn:hover {
+            background: var(--light);
+        }
+
+        /* МОДАЛЬНЫЕ ОКНА */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-modal {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* АДАПТИВНОСТЬ */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .search-bar {
+                min-width: 100%;
+                order: 3;
+                margin-top: 15px;
+            }
+            
+            .header-main .container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ШАПКА -->
+    <header>
+        <div class="header-top">
+            <div class="container">
+                <div class="header-contacts">
+                    <i class="fas fa-phone"></i> +7 (923) 753-36-06
+                    <span style="margin: 0 15px">|</span>
+                    <i class="fas fa-envelope"></i> prodtorg.barnaul@gmail.com
+                </div>
+            </div>
+        </div>
+        <div class="header-main">
+            <div class="container">
+                <a href="#" class="logo">ДЛЯ СВОИХ<span>.</span></a>
+                
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Поиск товаров...">
+                    <button onclick="searchProducts()"><i class="fas fa-search"></i></button>
+                </div>
+                
+                <div class="header-actions">
+                    <a href="#" class="header-action" onclick="openModal('profileModal')">
+                        <i class="far fa-user"></i>
+                        <span>Профиль</span>
+                    </a>
+                    <a href="#" class="header-action" onclick="openModal('cartModal')" style="position: relative;">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Корзина</span>
+                        <div class="cart-count" id="cartCount">0</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ГЛАВНЫЙ ЭКРАН -->
+    <section class="hero">
+        <div class="container">
+            <h1>Магазин для своих</h1>
+            <p>Эксклюзивные товары и специальные предложения для нашего круга</p>
+        </div>
+    </section>
+
+    <!-- КАТЕГОРИИ -->
+    <section class="categories-section">
+        <div class="container">
+            <h2 class="section-title">КАТЕГОРИИ ТОВАРОВ</h2>
+            <div class="categories-grid" id="categoriesGrid">
+                <!-- Категории загружаются через JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ТОВАРЫ -->
+    <section class="products-section">
+        <div class="container">
+            <h2 class="section-title">ПОПУЛЯРНЫЕ ТОВАРЫ</h2>
+            <div class="products-grid" id="productsGrid">
+                <!-- Товары загружаются через JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- КОНСТРУКТОР -->
+    <div class="constructor-toggle" onclick="toggleConstructor()">
+        <i class="fas fa-cog"></i>
+    </div>
+    
+    <div class="constructor-menu" id="constructorMenu">
+        <button class="constructor-btn" onclick="editProducts()">
+            <i class="fas fa-box"></i> Управление товарами
+        </button>
+        <button class="constructor-btn" onclick="editCategories()">
+            <i class="fas fa-folder"></i> Управление категориями
+        </button>
+        <button class="constructor-btn" onclick="importProducts()">
+            <i class="fas fa-file-import"></i> Импорт товаров
+        </button>
+        <button class="constructor-btn" onclick="exportData()">
+            <i class="fas fa-download"></i> Экспорт данных
+        </button>
+        <button class="constructor-btn" onclick="openAdminMode()">
+            <i class="fas fa-user-shield"></i> Режим администратора
+        </button>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО КОРЗИНЫ -->
+    <div class="modal" id="cartModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🛒 Корзина</h3>
+                <span class="close-modal" onclick="closeModal('cartModal')">&times;</span>
+            </div>
+            <div id="cartItems">
+                <p style="text-align: center; color: var(--gray); padding: 40px 0;">Корзина пуста</p>
+            </div>
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--border);">
+                <div style="display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: bold;">
+                    <span>Итого:</span>
+                    <span id="cartTotal">0 ₽</span>
+                </div>
+                <button class="add-to-cart" style="margin-top: 20px;" onclick="checkout()">Оформить заказ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ПРОФИЛЯ -->
+    <div class="modal" id="profileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>👤 Профиль</h3>
+                <span class="close-modal" onclick="closeModal('profileModal')">&times;</span>
+            </div>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="width: 80px; height: 80px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; margin: 0 auto 15px;">А</div>
+                <h3>Администратор</h3>
+                <p style="color: var(--gray);">Администратор магазина</p>
+            </div>
+            <div style="margin-top: 20px;">
+                <p><strong>Email:</strong> admin@myshop.ru</p>
+                <p><strong>Телефон:</strong> +7 (923) 753-36-06</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО УПРАВЛЕНИЯ ТОВАРАМИ -->
+    <div class="modal" id="productsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🛍️ Управление товарами</h3>
+                <span class="close-modal" onclick="closeModal('productsModal')">&times;</span>
+            </div>
+            <div id="productsModalContent">
+                <!-- Контент загружается динамически -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== ДАННЫЕ ====================
+        let products = JSON.parse(localStorage.getItem('products')) || [];
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let categories = JSON.parse(localStorage.getItem('categories')) || [
+            { name: 'Бытовая химия', icon: '🧴', color: '#667eea' },
+            { name: 'Электроника', icon: '📱', color: '#f093fb' },
+            { name: 'Одежда', icon: '👕', color: '#4facfe' },
+            { name: 'Продукты', icon: '🍎', color: '#43e97b' },
+            { name: 'Косметика', icon: '💄', color: '#fa709a' }
+        ];
+
+        // ==================== ОСНОВНЫЕ ФУНКЦИИ ====================
+        function initApp() {
+            loadCategories();
+            loadProducts();
+            updateCartCount();
+            
+            // Добавляем тестовые товары если их нет
+            if (products.length === 0) {
+                addTestProducts();
+            }
+        }
+
+        function loadCategories() {
+            const grid = document.getElementById('categoriesGrid');
+            grid.innerHTML = categories.map(category => `
+                <div class="category-card" onclick="filterByCategory('${category.name}')" 
+                     style="background: linear-gradient(135deg, ${category.color}, ${adjustColor(category.color, -20)})">
+                    <div class="category-icon">${category.icon}</div>
+                    <h3>${category.name}</h3>
+                </div>
+            `).join('');
+        }
+
+        function loadProducts() {
+            const grid = document.getElementById('productsGrid');
+            
+            if (products.length === 0) {
+                grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: var(--gray); padding: 40px;">Товаров пока нет</p>';
+                return;
+            }
+            
+            grid.innerHTML = products.map(product => `
+                <div class="product-card">
+                    <img src="${product.image}" alt="${product.name}" class="product-image" 
+                         onerror="this.src='https://via.placeholder.com/300x200/ecf0f1/7f8c8d?text=Нет+изображения'">
+                    <div class="product-info">
+                        <div style="color: var(--gray); font-size: 0.9rem; margin-bottom: 5px;">${product.category}</div>
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">${product.price} ₽</div>
+                        <button class="add-to-cart" onclick="addToCart(${product.id})">В корзину</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addTestProducts() {
+            const testProducts = [
+                {
+                    id: 1,
+                    name: 'FAIRY banane - 5 литров',
+                    category: 'Бытовая химия',
+                    price: 800,
+                    image: 'https://via.placeholder.com/300x200/667eea/ffffff?text=FAIRY'
+                },
+                {
+                    id: 2,
+                    name: 'Смартфон Xiaomi',
+                    category: 'Электроника',
+                    price: 15000,
+                    image: 'https://via.placeholder.com/300x200/f093fb/ffffff?text=Xiaomi'
+                },
+                {
+                    id: 3,
+                    name: 'Футболка хлопковая',
+                    category: 'Одежда',
+                    price: 1200,
+                    image: 'https://via.placeholder.com/300x200/4facfe/ffffff?text=Футболка'
+                },
+                {
+                    id: 4,
+                    name: 'Молоко 3.2%',
+                    category: 'Продукты',
+                    price: 85,
+                    image: 'https://via.placeholder.com/300x200/43e97b/ffffff?text=Молоко'
+                }
+            ];
+            
+            products = testProducts;
+            localStorage.setItem('products', JSON.stringify(products));
+            loadProducts();
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    ...product,
+                    quantity: 1
+                });
+            }
+            
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            showNotification('Товар добавлен в корзину!');
+        }
+
+        function updateCartCount() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = totalItems;
+        }
+
+        function openModal(modalId) {
+            if (modalId === 'cartModal') {
+                updateCartModal();
+            }
+            document.getElementById(modalId).classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        function updateCartModal() {
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p style="text-align: center; color: var(--gray); padding: 40px 0;">Корзина пуста</p>';
+                cartTotal.textContent = '0 ₽';
+                return;
+            }
+            
+            cartItems.innerHTML = cart.map(item => `
+                <div style="display: flex; align-items: center; gap: 15px; padding: 15px 0; border-bottom: 1px solid var(--border);">
+                    <img src="${item.image}" alt="${item.name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                    <div style="flex: 1;">
+                        <div style="font-weight: bold;">${item.name}</div>
+                        <div>${item.price} ₽ × ${item.quantity}</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <button onclick="changeQuantity(${item.id}, -1)" style="width: 30px; height: 30px; border: 1px solid var(--border); border-radius: 50%; background: white;">-</button>
+                        <span>${item.quantity}</span>
+                        <button onclick="changeQuantity(${item.id}, 1)" style="width: 30px; height: 30px; border: 1px solid var(--border); border-radius: 50%; background: white;">+</button>
+                        <button onclick="removeFromCart(${item.id})" style="color: var(--secondary); border: none; background: none; cursor: pointer;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            cartTotal.textContent = total + ' ₽';
+        }
+
+        function changeQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            if (!item) return;
+            
+            item.quantity += change;
+            if (item.quantity <= 0) {
+                removeFromCart(productId);
+            } else {
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartCount();
+                updateCartModal();
+            }
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            updateCartModal();
+            showNotification('Товар удален из корзины');
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                showNotification('Корзина пуста');
+                return;
+            }
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            showNotification(`✅ Заказ оформлен! Сумма: ${total} ₽`);
+            cart = [];
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            closeModal('cartModal');
+        }
+
+        function searchProducts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const grid = document.getElementById('productsGrid');
+            
+            if (!searchTerm.trim()) {
+                loadProducts();
+                return;
+            }
+            
+            const filtered = products.filter(product => 
+                product.name.toLowerCase().includes(searchTerm) ||
+                product.category.toLowerCase().includes(searchTerm)
+            );
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: var(--gray); padding: 40px;">Товары не найдены</p>';
+                return;
+            }
+            
+            grid.innerHTML = filtered.map(product => `
+                <div class="product-card">
+                    <img src="${product.image}" alt="${product.name}" class="product-image">
+                    <div class="product-info">
+                        <div style="color: var(--gray); font-size: 0.9rem; margin-bottom: 5px;">${product.category}</div>
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">${product.price} ₽</div>
+                        <button class="add-to-cart" onclick="addToCart(${product.id})">В корзину</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterByCategory(category) {
+            const grid = document.getElementById('productsGrid');
+            const filtered = products.filter(product => product.category === category);
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: var(--gray); padding: 40px;">В этой категории товаров пока нет</p>';
+                return;
+            }
+            
+            grid.innerHTML = filtered.map(product => `
+                <div class="product-card">
+                    <img src="${product.image}" alt="${product.name}" class="product-image">
+                    <div class="product-info">
+                        <div style="color: var(--gray); font-size: 0.9rem; margin-bottom: 5px;">${product.category}</div>
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">${product.price} ₽</div>
+                        <button class="add-to-cart" onclick="addToCart(${product.id})">В корзину</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ==================== КОНСТРУКТОР ====================
+        function toggleConstructor() {
+            document.getElementById('constructorMenu').classList.toggle('show');
+        }
+
+        function editProducts() {
+            closeModal('productsModal');
+            setTimeout(() => {
+                document.getElementById('productsModalContent').innerHTML = `
+                    <h4 style="margin-bottom: 20px;">Управление товарами (${products.length})</h4>
+                    
+                    <button onclick="showAddProductForm()" 
+                            style="width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; margin-bottom: 20px;">
+                        <i class="fas fa-plus"></i> Добавить товар
+                    </button>
+                    
+                    <button onclick="importFromFile()" 
+                            style="width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 8px; margin-bottom: 20px;">
+                        <i class="fas fa-file-import"></i> Импорт из файла
+                    </button>
+                    
+                    <div style="max-height: 300px; overflow-y: auto; margin-top: 20px;">
+                        ${products.map((product, index) => `
+                            <div style="display: flex; align-items: center; gap: 15px; padding: 15px; border-bottom: 1px solid var(--border);">
+                                <img src="${product.image}" alt="${product.name}" 
+                                     style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                                <div style="flex: 1;">
+                                    <div style="font-weight: bold;">${product.name}</div>
+                                    <div style="color: var(--gray); font-size: 0.9rem;">${product.category} • ${product.price} ₽</div>
+                                </div>
+                                <div>
+                                    <button onclick="editProduct(${index})" style="background: none; border: none; color: var(--primary); cursor: pointer; margin-right: 10px;">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button onclick="deleteProduct(${index})" style="background: none; border: none; color: var(--secondary); cursor: pointer;">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                openModal('productsModal');
+            }, 300);
+        }
+
+        function showAddProductForm() {
+            document.getElementById('productsModalContent').innerHTML = `
+                <h4 style="margin-bottom: 20px;">Добавить товар</h4>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Название товара</label>
+                    <input type="text" id="newProductName" style="width: 100%; padding: 10px; border: 2px solid var(--border); border-radius: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Категория</label>
+                    <select id="newProductCategory" style="width: 100%; padding: 10px; border: 2px solid var(--border); border-radius: 8px;">
+                        <option value="">Выберите категорию</option>
+                        ${categories.map(cat => `<option value="${cat.name}">${cat.name}</option>`).join('')}
+                    </select>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Цена (₽)</label>
+                    <input type="number" id="newProductPrice" style="width: 100%; padding: 10px; border: 2px solid var(--border); border-radius: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">URL изображения</label>
+                    <input type="text" id="newProductImage" placeholder="https://example.com/image.jpg" 
+                           style="width: 100%; padding: 10px; border: 2px solid var(--border); border-radius: 8px;">
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="editProducts()" style="flex: 1; padding: 12px; background: var(--gray); color: white; border: none; border-radius: 8px;">
+                        Отмена
+                    </button>
+                    <button onclick="saveNewProduct()" style="flex: 1; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 8px;">
+                        Сохранить
+                    </button>
+                </div>
+            `;
+        }
+
+        function saveNewProduct() {
+            const name = document.getElementById('newProductName').value;
+            const category = document.getElementById('newProductCategory').value;
+            const price = parseInt(document.getElementById('newProductPrice').value);
+            const image = document.getElementById('newProductImage').value;
+            
+            if (!name || !category || !price) {
+                showNotification('❌ Заполните все поля', 'error');
+                return;
+            }
+            
+            const newProduct = {
+                id: Date.now(),
+                name: name,
+                category: category,
+                price: price,
+                image: image || 'https://via.placeholder.com/300x200/ecf0f1/7f8c8d?text=Нет+изображения'
+            };
+            
+            products.push(newProduct);
+            localStorage.setItem('products', JSON.stringify(products));
+            
+            showNotification('✅ Товар добавлен!');
+            editProducts();
+            loadProducts();
+        }
+
+        function editProduct(index) {
+            const product = products[index];
+            
+            document.getElementById('productsModalContent').innerHTML = `
+                <h4 style="margin-bottom: 20px;">Редактировать товар</h4>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Название товара</label>
+                    <input type="text" id="editProductName" value="${product.name}" 
+                           style="width: 100%; padding: 10px; border: 2px solid var(--border); border-radius: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Категория</label>
+                    <select id="editProductCategory" style="width: 100%; padding: 10px; border: 2px solid var(--border); border-radius: 8px;">
+                        ${categories.map(cat => 
+                            `<option value="${cat.name}" ${cat.name === product.category ? 'selected' : ''}>${cat.name}</option>`
+                        ).join('')}
+                    </select>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Цена (₽)</label>
+                    <input type="number" id="editProductPrice" value="${product.price}" 
+                           style="width: 100%; padding: 10px; border: 2px solid var(--border); border-radius: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">URL изображения</label>
+                    <input type="text" id="editProductImage" value="${product.image}" 
+                           style="width: 100%; padding: 10px; border: 2px solid var(--border); border-radius: 8px;">
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="editProducts()" style="flex: 1; padding: 12px; background: var(--gray); color: white; border: none; border-radius: 8px;">
+                        Отмена
+                    </button>
+                    <button onclick="saveEditedProduct(${index})" style="flex: 1; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 8px;">
+                        Сохранить
+                    </button>
+                </div>
+            `;
+        }
+
+        function saveEditedProduct(index) {
+            const name = document.getElementById('editProductName').value;
+            const category = document.getElementById('editProductCategory').value;
+            const price = parseInt(document.getElementById('editProductPrice').value);
+            const image = document.getElementById('editProductImage').value;
+            
+            if (!name || !category || !price) {
+                showNotification('❌ Заполните все поля', 'error');
+                return;
+            }
+            
+            products[index] = {
+                ...products[index],
+                name: name,
+                category: category,
+                price: price,
+                image: image || 'https://via.placeholder.com/300x200/ecf0f1/7f8c8d?text=Нет+изображения'
+            };
+            
+            localStorage.setItem('products', JSON.stringify(products));
+            
+            showNotification('✅ Товар обновлен!');
+            editProducts();
+            loadProducts();
+        }
+
+        function deleteProduct(index) {
+            if (confirm('Удалить товар?')) {
+                products.splice(index, 1);
+                localStorage.setItem('products', JSON.stringify(products));
+                showNotification('Товар удален');
+                editProducts();
+                loadProducts();
+            }
+        }
+
+        function importFromFile() {
+            document.getElementById('productsModalContent').innerHTML = `
+                <h4 style="margin-bottom: 20px;">Импорт товаров</h4>
+                
+                <div style="text-align: center; padding: 40px 20px; border: 3px dashed var(--border); border-radius: 15px; margin-bottom: 20px; cursor: pointer;" 
+                     onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;"></i>
+                    <h4>Нажмите для загрузки файла</h4>
+                    <p style="color: var(--gray);">Поддерживаются CSV и Excel файлы</p>
+                    <input type="file" id="fileInput" accept=".csv,.xlsx" style="display: none;" onchange="handleFileImport(this.files[0])">
+                </div>
+                
+                <div style="background: var(--light); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                    <h5 style="margin-bottom: 10px;">📋 Формат CSV файла:</h5>
+                    <p style="font-size: 0.9rem; color: var(--gray);">
+                        Название товара;Категория;Цена;URL изображения<br>
+                        Пример: FAIRY banane;Бытовая химия;800;https://example.com/image.jpg
+                    </p>
+                </div>
+                
+                <button onclick="editProducts()" 
+                        style="width: 100%; padding: 12px; background: var(--gray); color: white; border: none; border-radius: 8px;">
+                    Назад
+                </button>
+            `;
+        }
+
+        function handleFileImport(file) {
+            if (!file) return;
+            
+            const reader = new FileReader();
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            
+            if (fileExtension === 'csv') {
+                reader.onload = function(e) {
+                    try {
+                        const csvData = e.target.result;
+                        const lines = csvData.split('\n').filter(line => line.trim() !== '');
+                        
+                        let imported = 0;
+                        let errors = 0;
+                        
+                        for (let i = 0; i < lines.length; i++) {
+                            const values = lines[i].split(';').map(v => v.trim());
+                            if (values.length >= 3) {
+                                const [name, category, price, image] = values;
+                                
+                                const newProduct = {
+                                    id: Date.now() + i,
+                                    name: name,
+                                    category: category,
+                                    price: parseInt(price) || 0,
+                                    image: image || 'https://via.placeholder.com/300x200/ecf0f1/7f8c8d?text=Нет+изображения'
+                                };
+                                
+                                products.push(newProduct);
+                                imported++;
+                            } else {
+                                errors++;
+                            }
+                        }
+                        
+                        localStorage.setItem('products', JSON.stringify(products));
+                        showNotification(`✅ Импорт завершен! Добавлено: ${imported}, Ошибок: ${errors}`);
+                        editProducts();
+                        loadProducts();
+                        
+                    } catch (error) {
+                        showNotification('❌ Ошибка обработки CSV файла', 'error');
+                    }
+                };
+                reader.readAsText(file, 'UTF-8');
+            } else if (fileExtension === 'xlsx') {
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+                        
+                        jsonData.forEach((row, index) => {
+                            const newProduct = {
+                                id: Date.now() + index,
+                                name: row['Название'] || row['Название товара'] || `Товар ${index + 1}`,
+                                category: row['Категория'] || 'Без категории',
+                                price: parseInt(row['Цена'] || row['Цена продажи'] || 0),
+                                image: row['Изображение'] || row['URL изображения'] || 
+                                      'https://via.placeholder.com/300x200/ecf0f1/7f8c8d?text=Нет+изображения'
+                            };
+                            
+                            products.push(newProduct);
+                        });
+                        
+                        localStorage.setItem('products', JSON.stringify(products));
+                        showNotification(`✅ Импорт завершен! Добавлено ${jsonData.length} товаров`);
+                        editProducts();
+                        loadProducts();
+                        
+                    } catch (error) {
+                        showNotification('❌ Ошибка обработки Excel файла', 'error');
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            } else {
+                showNotification('❌ Поддерживаются только CSV и Excel файлы', 'error');
+            }
+        }
+
+        function editCategories() {
+            closeModal('productsModal');
+            setTimeout(() => {
+                document.getElementById('productsModalContent').innerHTML = `
+                    <h4 style="margin-bottom: 20px;">Управление категориями</h4>
+                    
+                    <button onclick="showAddCategoryForm()" 
+                            style="width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; margin-bottom: 20px;">
+                        <i class="fas fa-plus"></i> Добавить категорию
+                    </button>
+                    
+                    <div style="max-height: 300px; overflow-y: auto; margin-top: 20px;">
+                        ${categories.map((category, index) => `
+                            <div style="display: flex; align-items: center; gap: 15px; padding: 15px; border-bottom: 1px solid var(--border);">
+                                <div style="font-size: 2rem;">${category.icon}</div>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: bold;">${category.name}</div>
+                                    <div style="color: var(--gray); font-size: 0.9rem;">
+                                        Товаров: ${products.filter(p => p.category === category.name).length}
+                                    </div>
+                                </div>
+                                <div>
+                                    <button onclick="editCategory(${index})" style="background: none; border: none; color: var(--primary); cursor: pointer; margin-right: 10px;">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button onclick="deleteCategory(${index})" style="background: none; border: none; color: var(--secondary); cursor: pointer;">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                openModal('productsModal');
+            }, 300);
+        }
+
+        function showAddCategoryForm() {
+            document.getElementById('productsModalContent').innerHTML = `
+                <h4 style="margin-bottom: 20px;">Добавить категорию</h4>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Название категории</label>
+                    <input type="text" id="newCategoryName" style="width: 100%; padding: 10px; border: 2px solid var(--border); border-radius: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Иконка (эмодзи)</label>
+                    <input type="text" id="newCategoryIcon" value="📦" style="width: 100%; padding: 10px; border: 2px solid var(--border); border-radius: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Цвет</label>
+                    <input type="color" id="newCategoryColor" value="#667eea" style="width: 100%; height: 50px;">
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="editCategories()" style="flex: 1; padding: 12px; background: var(--gray); color: white; border: none; border-radius: 8px;">
+                        Отмена
+                    </button>
+                    <button onclick="saveNewCategory()" style="flex: 1; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 8px;">
+                        Сохранить
+                    </button>
+                </div>
+            `;
+        }
+
+        function saveNewCategory() {
+            const name = document.getElementById('newCategoryName').value;
+            const icon = document.getElementById('newCategoryIcon').value;
+            const color = document.getElementById('newCategoryColor').value;
+            
+            if (!name || !icon) {
+                showNotification('❌ Заполните обязательные поля', 'error');
+                return;
+            }
+            
+            categories.push({
+                name: name,
+                icon: icon,
+                color: color
+            });
+            
+            localStorage.setItem('categories', JSON.stringify(categories));
+            showNotification('✅ Категория добавлена!');
+            editCategories();
+            loadCategories();
+        }
+
+        function editCategory(index) {
+            const category = categories[index];
+            
+            document.getElementById('productsModalContent').innerHTML = `
+                <h4 style="margin-bottom: 20px;">Редактировать категорию</h4>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Название категории</label>
+                    <input type="text" id="editCategoryName" value="${category.name}" 
+                           style="width: 100%; padding: 10px; border: 2px solid var(--border); border-radius: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Иконка (эмодзи)</label>
+                    <input type="text" id="editCategoryIcon" value="${category.icon}" 
+                           style="width: 100%; padding: 10px; border: 2px solid var(--border); border-radius: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Цвет</label>
+                    <input type="color" id="editCategoryColor" value="${category.color}" style="width: 100%; height: 50px;">
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="editCategories()" style="flex: 1; padding: 12px; background: var(--gray); color: white; border: none; border-radius: 8px;">
+                        Отмена
+                    </button>
+                    <button onclick="saveEditedCategory(${index})" style="flex: 1; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 8px;">
+                        Сохранить
+                    </button>
+                </div>
+            `;
+        }
+
+        function saveEditedCategory(index) {
+            const name = document.getElementById('editCategoryName').value;
+            const icon = document.getElementById('editCategoryIcon').value;
+            const color = document.getElementById('editCategoryColor').value;
+            
+            if (!name || !icon) {
+                showNotification('❌ Заполните обязательные поля', 'error');
+                return;
+            }
+            
+            categories[index] = {
+                name: name,
+                icon: icon,
+                color: color
+            };
+            
+            localStorage.setItem('categories', JSON.stringify(categories));
+            showNotification('✅ Категория обновлена!');
+            editCategories();
+            loadCategories();
+        }
+
+        function deleteCategory(index) {
+            if (confirm('Удалить категорию?')) {
+                categories.splice(index, 1);
+                localStorage.setItem('categories', JSON.stringify(categories));
+                showNotification('Категория удалена');
+                editCategories();
+                loadCategories();
+            }
+        }
+
+        function importProducts() {
+            importFromFile();
+            openModal('productsModal');
+        }
+
+        function exportData() {
+            const data = {
+                products: products,
+                categories: categories,
+                cart: cart,
+                exportDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `backup_${Date.now()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            showNotification('📁 Данные экспортированы!');
+        }
+
+        function openAdminMode() {
+            showNotification('🔧 Режим администратора активирован');
+        }
+
+        // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
+        function adjustColor(color, amount) {
+            let usePound = false;
+            if (color[0] === "#") {
+                color = color.slice(1);
+                usePound = true;
+            }
+            const num = parseInt(color, 16);
+            let r = (num >> 16) + amount;
+            if (r > 255) r = 255;
+            else if (r < 0) r = 0;
+            let b = ((num >> 8) & 0x00FF) + amount;
+            if (b > 255) b = 255;
+            else if (b < 0) b = 0;
+            let g = (num & 0x0000FF) + amount;
+            if (g > 255) g = 255;
+            else if (g < 0) g = 0;
+            return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16).padStart(6, '0');
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'error' ? 'var(--secondary)' : 'var(--accent)'};
+                color: white;
+                padding: 15px 25px;
+                border-radius: 8px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Добавляем стили для анимаций
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // ==================== ЗАПУСК ПРИЛОЖЕНИЯ ====================
+        document.addEventListener('DOMContentLoaded', initApp);
+        
+        // Закрытие модальных окон при клике вне их
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('show');
+            }
+        };
+    </script>
+</body>
+</html>
